@@ -1,3 +1,24 @@
+# Jungle GYM
+Jungle GYM is an application that helps you find your running mate.
+## 설치
+```
+# Create venv
+python3 -m venv .venv
+
+# Run venv (window, Powershell)
+.\venv\Scripts\activate
+
+# Run venv (mac)
+. .venv/bin/activate
+
+# Install Packages
+pip install SomePackage 
+
+# Run
+flask run
+```
+## 파일 구조
+```
 JungleGYM/
 ├── app/
 │   ├── __init__.py           # Flask 앱 초기화 및 설정
@@ -37,3 +58,4 @@ JungleGYM/
 │       ├── index.html        # 홈 페이지 템플릿
 ├── venv/                     # 가상 환경
 └── run.py                    # 애플리케이션 실행 진입점
+```
