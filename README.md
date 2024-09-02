@@ -14,6 +14,9 @@ python3 -m venv .venv
 # Install Packages
 pip install SomePackage 
 
+# MongDB
+pip install pymongo
+
 # Run
 flask run
 ```
