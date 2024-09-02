@@ -12,7 +12,6 @@ python3 -m venv .venv
 . .venv/bin/activate
 
 # Install Packages
-pip install SomePackage 
 pip install Flask
 pip install pymongo
 pip install Jinja2
