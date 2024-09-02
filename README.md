@@ -13,9 +13,9 @@ python3 -m venv .venv
 
 # Install Packages
 pip install SomePackage 
-
-# MongDB
+pip install Flask
 pip install pymongo
+pip install Jinja2
 
 # Run
 flask run
