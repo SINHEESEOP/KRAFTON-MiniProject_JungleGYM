@@ -1,0 +1,27 @@
+# Python 관련
+__pycache__/
+*.py[cod]
+*.egg
+*.egg-info/
+*.eggs/
+*.pyo
+
+# 환경설정 파일
+*.env
+
+# Virtual environment
+venv/
+.env/
+
+# PyCharm 관련 파일 및 디렉토리
+.idea/
+*.iml
+
+# VSCode 관련 파일 및 디렉토리
+.vscode/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Log files
+*.log
