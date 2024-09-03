@@ -1,21 +1,20 @@
 from flask import Flask, render_template, jsonify, request
 from pymongo import MongoClient
 from datetime import datetime, timezone
-
-app = Flask(__name__)
+from app.meetings.__init__ import meetings_bp
 
 # Replace with your MongoDB connection string
 client = MongoClient("mongodb://jungleGYM:jungleGYM@13.125.51.118", 27017)
 db = client.gym_app
 
+@meetings_bp.route("/")
+def index():
+    return render_template("meeting.html")
 
-@app.route("/")
-def home():
-    return render_template("index.html")
-
-
-@app.route("/create_gym", methods=["POST"])
+@meetings_bp.route("/create_gym", methods=["POST"])
 def create_gym():
+
+    print("되는거노?22")
     category = request.form.get("category")
     date = request.form.get("date")
     time = request.form.get("time")
@@ -43,13 +42,15 @@ def create_gym():
     return jsonify({"result": "success", "msg": "운동 스케줄 생성 성공!"})
 
 
-@app.route("/get_gym_list", methods=["GET"])
+@meetings_bp.route("/get_gym_list", methods=["GET"])
 def get_gym_list():
+
+    print("되는거노?")
     gym_list = list(db.gyms.find({}, {"_id": False}).sort("created_at", -1))
     return jsonify({"result": "success", "gym_list": gym_list})
 
 
-@app.route("/get_gym_details", methods=["POST"])
+@meetings_bp.route("/get_gym_details", methods=["POST"])
 def get_gym_details():
     date = request.form.get("date")
     time = request.form.get("time")
@@ -62,7 +63,7 @@ def get_gym_details():
     return jsonify({"result": "success", "gym_details": gym_details})
 
 
-@app.route("/participate_gym", methods=["POST"])
+@meetings_bp.route("/participate_gym", methods=["POST"])
 def participate_gym():
     date = request.form.get("date")
     time = request.form.get("time")
@@ -77,7 +78,3 @@ def participate_gym():
     )
 
     return jsonify({"result": "success", "msg": "참가 완료!"})
-
-
-if __name__ == "__main__":
-    app.run("0.0.0.0", port=5000, debug=True)

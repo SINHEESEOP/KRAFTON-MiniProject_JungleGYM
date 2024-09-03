@@ -15,6 +15,9 @@ python3 -m venv .venv
 pip install Flask
 pip install pymongo
 pip install Jinja2
+pip install python-dotenv
+pip install wtforms
+
 
 # Run
 flask run
