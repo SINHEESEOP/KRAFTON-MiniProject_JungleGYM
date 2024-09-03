@@ -7,5 +7,3 @@ def rankingPage():
     print("되냐?")
     rankings = get_all_rankings()
     return render_template('ranking.html', rankings=rankings)
-
-

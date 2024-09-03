@@ -1,5 +1,5 @@
 from flask import redirect, render_template, flash, request, jsonify
-from app.auth import auth_bp, services
+from app.auth.__init__ import auth_bp, services
 from app.auth.forms import LoginForm, RegisterForm
 
 from datetime import datetime
