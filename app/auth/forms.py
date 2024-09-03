@@ -1,6 +1,5 @@
 from wtforms import Form, StringField, PasswordField, SelectField, DateField, SelectMultipleField
 from wtforms.validators import DataRequired, Length, EqualTo
-from datetime import datetime
 
 gender_choices=[('male', '남자'), ('female', '여자')]
 interests_choices=[('running', '러닝'), ('health', '헬스'), ('climbing', '클라이밍')]
