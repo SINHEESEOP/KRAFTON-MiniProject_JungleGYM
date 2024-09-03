@@ -1,1 +1,26 @@
+from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import date
+from app import mongo
 
+def login(user_id, password):
+  user = mongo.db.users.find_one({"user_id": user_id})
+  # if user and check_password_hash(user['password_hash'], password):
+  if user and user['password'] == password:
+    return user
+  return None
+
+def register(user_id, password, password_confirm, name, nickname, gender, age, phone_number, interests):
+  user = mongo.db.users.find_one({"user_id": user_id})
+  if user:
+    return None
+  # 비밀번호 해싱 및 사용자 저장
+  # hashed_password = generate_password_hash(password)
+  ## in local MAC
+  # hashed_password = generate_password_hash(password, method="pbkdf2:sha256")
+  print(age)
+  # mydate = age.split('-')
+  mongo.db.users.insert_one({
+    "user_id": user_id, "password": password, "name": name, "nickname": nickname, "gender": gender, "birth": age, "phone_number": phone_number, "interests": interests
+  })
+  return 'y'
+  
