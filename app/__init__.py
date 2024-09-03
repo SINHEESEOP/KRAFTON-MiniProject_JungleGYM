@@ -9,9 +9,9 @@ def create_app():
     mongo.init_app(app)
 
     # 블루프린트 등록
-    from app.auth._init_ import auth_bp
-    from app.meetings._init_ import meetings_bp
-    from app.ranking._init_ import ranking_bp
+    from app.auth.__init__ import auth_bp
+    from app.meetings.__init__ import meetings_bp
+    from app.ranking.__init__ import ranking_bp
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(meetings_bp, url_prefix='/meetings')
     app.register_blueprint(ranking_bp, url_prefix='/ranking')
@@ -25,6 +25,7 @@ def create_app():
     def internal_error(error):
         return "Internal Server Error", 500
 
+    # 메인 페이지
     @app.route('/')
     def index():
         return render_template("index.html")
