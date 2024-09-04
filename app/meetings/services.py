@@ -35,6 +35,12 @@ def update_meeting(meeting_id, data):
 
 def delete_meeting(meeting_id):
     return Meeting.delete(meeting_id)
+
+def clean_leader_info(leader_info):
+    """MongoDB ObjectId를 문자열로 변환하여 JSON 변환 가능하게 함"""
+    if leader_info and '_id' in leader_info:
+        leader_info['_id'] = str(leader_info['_id'])
+    return leader_info
   
 
 # def search_address_by_kakao(address):
