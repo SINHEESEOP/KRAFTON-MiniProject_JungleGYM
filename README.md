@@ -22,7 +22,9 @@ pip install python-dotenv
 pip install wtforms
 pip install flask_jwt_extended
 pip install flask_pymongo
-pip install flask_wtf
+pip install flask_wt
+pip install requests
+
 
 
 # Run

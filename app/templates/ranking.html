@@ -173,7 +173,7 @@
 		<h1>Rank</h1>
 		<div class="rank-badge" style="margin-bottom: 20px">
 			<i class="fas fa-crown"></i>
-			<span class="badge-number">1</span> {# 계정 인증이 되면 나의 순위를 확인한게 함. #}
+			<span class="badge-number">{{ level }}</span> {# 계정 인증이 되면 나의 순위를 확인한게 함. #}
 		</div>
 	</div>
 
@@ -187,7 +187,7 @@
 				<div class="rank-content">
 					<p class="rank-name">{{ rank.name }}</p>
 					<p class="rank-level">Lv. {{ rank.level }}</p>
-					<p class="rank-time">총 운동시간 : {{ rank.totalExTime }}</p>
+					<p class="rank-time">총 운동시간 : {{ rank.total_ex_time }}</p>
 				</div>
 			</div>
 		{% endfor %}
@@ -195,12 +195,7 @@
 
 </div>
 
-<div class="bottom-nav">
-	<a href="/" class="active">
-		<i class="fas fa-home"></i>
-		<span>홈</span>
-	</a>
-</div>
+{% include 'baseLayout.html' %}
 
 </body>
 </html>
