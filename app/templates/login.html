@@ -47,7 +47,7 @@
             success: function (response) {
                 console.log(response);
                 if(response.result === 'success') {
-                    window.location.replace('/auth/myinfo')
+                    window.location.href = '/'
                 } else {
                     $("#error_message").text(response.msg)
                 }

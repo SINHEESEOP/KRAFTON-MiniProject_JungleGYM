@@ -193,6 +193,8 @@
     </style>
   </head>
   <body>
+    {% from "logout_button.html" import logout_button%}
+    {{ logout_button() }}
     <div class="container">
       <div class="level-info">
         <div class="level-bar">
