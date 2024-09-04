@@ -6,19 +6,19 @@ client = MongoClient('localhost', 27017)
 db = client.mydatabase
 
 class User:
-    def __init__(self, name, level, totalExTime):
+    def __init__(self, name, level, total_ex_time):
         self.name = name
         self.level = level
-        self.totalExTime = totalExTime
+        self.totalExTime = total_ex_time
 
 
     @classmethod
     def find_all(cls):
-        userList = db.gym.find()
-        return list(userList)
+        user_list = db.users.find().sort("total_ex_time", -1)
+        return list(user_list)
 
     @classmethod
-    def find_one(cls, userId):
-        user = db['gym'].find_one({'_id': ObjectId(userId)})
+    def find_one(cls, user_id):
+        user = db['users'].find_one({'user_id': user_id})
         return user
 
