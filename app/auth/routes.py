@@ -34,7 +34,7 @@ def login():
     
     result = login_service(request.form.get('user_id'), request.form.get('password'))
 
-    if result:
+    if not result:
       return jsonify({'result': 'failed', 'msg': '아이디 또는 비밀번호가 틀렸습니다.'})
     
     access_token = create_access_token(identity=request.form.get('user_id'))
