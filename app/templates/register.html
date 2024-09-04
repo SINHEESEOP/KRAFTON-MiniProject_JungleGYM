@@ -5,89 +5,137 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
-<body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
-        <div class="container">
-            <a class="navbar-brand" href="/">Flask JWT Auth</a>
-        </div>
-    </nav>
-
-    <div class="container mt-4">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <h2 class="mb-4">Register</h2>
+<body>
+    <div class="container is-max-tablet">
+        <div class="is-flex is-flex-direction-column is-4-tablet">
+            <div class="p-6">
+                <h2 class="title is-3 has-text-centered">회원가입</h2>
                 <form id="register">
                     <div class="mb-3">
                         <label for="user_id" class="form-label">아이디</label>
-                        <input type="text" class="form-control" id="user_id" name="user_id" required>
+                        <input type="text" class="input" id="user_id" name="user_id" placeholder="아이디 (4자 이상 20자 이하)" required>
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">비밀번호</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
+                        <input type="password" class="input" id="password" name="password" placeholder="비밀번호 (8자 이상 20자 이하)" required>
                     </div>
                     <div class="mb-3">
                         <label for="password_confirm" class="form-label">비밀번호 확인</label>
-                        <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+                        <input type="password" class="input" id="password_confirm" name="password_confirm" placeholder="비밀번호 확인 (8자 이상 20자 이하)" equired>
                     </div>
                     <div class="mb-3">
                         <label for="name" class="form-label">이름</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
+                        <input type="text" class="input" id="name" name="name" placeholder="이름 (1자 이상 30자 이하)" required>
                     </div>
                     <div class="mb-3">
                         <label for="nickname" class="form-label">별명 (선택)</label>
-                        <input type="text" class="form-control" id="nickname" name="nickname">
+                        <input type="text" class="input" id="nickname" placeholder="별명 (선택)" name="nickname">
                     </div>
                     <div class="mb-3">
                         <label for="gender" class="form-label">성별</label>
-                        <select class="form-select"  name="gender" id="gender">
-                            <option value="male">남</option>
-                            <option value="female">여</option>
-                        </select>
+                        <div class="select is-fullwidth">
+                            <select name="gender" id="gender">
+                                <option value="male">남</option>
+                                <option value="female">여</option>
+                            </select>
+                        </div>
                     </div>
-
+            
                     <div class="mb-3">
-                        <label for="age" class="form-label">생일</label>
-                        <input type="number" class="form-control" id="age" name="age" required>
+                        <label for="age" class="form-label">나이</label>
+                        <input type="number" class="input" id="age" name="age" placeholder="나이 (1 ~ 200)" required>
                     </div>
                     <div class="mb-3">
                         <label for="phone_number" class="form-label">전화번호</label>
-                        <input type="text" class="form-control" id="phone_number" name="phone_number" required>
+                        <div class="field is-grouped is-grouped-centered">
+                        <input type="number" class="input" id="phone_number_left" name="phone_number_left" placeholder="010" pattern="[0-9]{2,3}" required>
+                        <input type="number" class="input" id="phone_number_mid" name="phone_number_mid" placeholder="0000" pattern="[0-9]{3,4}" required>
+                        <input type="number" class="input" id="phone_number_right" name="phone_number_right" placeholder="0000" pattern="[0-9]{4}" required>
+                        </div>
                     </div>
-
+                    <p id="error_message" class="has-text-danger help mb-3"></p>
                     <div class="mb-3">
                         <label for="interests" class="form-label">관심사</label>
                         <fieldset id="interests">
-                            <input class="form-check-input" type="checkbox" name="running">
-                            <label class="form-check-label" for="flexCheckChecked">
-                                러닝
+                            <label class="button is-rounded is-link is-outlined is-hovered">
+                                # <input type="checkbox" class="is-hidden" id="running" autocomplete="off">러닝
                             </label>
-
-                            <input class="form-check-input" type="checkbox" name="health">
-                            <label class="form-check-label" for="flexCheckChecked">
-                                헬스
+                            
+                            <label class="button is-rounded is-link is-outlined is-hovered">
+                                # <input type="checkbox" class="is-hidden" id="health" autocomplete="off">헬스
                             </label>
-
-                            <input class="form-check-input" type="checkbox" name="climbing">
-                            <label class="form-check-label" for="flexCheckChecked">
-                                클라이밍
+                            
+                            <label class="button is-rounded is-link is-outlined is-hovered">
+                                # <input type="checkbox" class="is-hidden" id="climbing" autocomplete="off">클라이밍
                             </label>
                         </fieldset>
                     </div>
-                    <button type="submit" class="btn btn-primary">Register</button>
+                    <div class="mb-3">
+                        <input class="form-check-input" type="checkbox" id="privacy-agree">
+                        <label class="checkbox" for="privacy-agree">개인정보 수집 및 이용 약관에 동의합니다.</label>
+                    </div>
+                    <div class="field is-grouped is-grouped-centered">
+                        <a href="/auth/login" class="button is-dark">취소</a>
+                        <button type="submit" class="button is-link " id="register-btn" disabled>회원가입</button>
+                    </div>
                 </form>
-                <p class="mt-3">Already have an account? <a href="/login">Login here</a></p>
             </div>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
-        $('#register').on("submit", function (event) {
+        $(document).ready(function() {
+            initCheckbox();
+            $('#privacy-agree').change(togglePrivacyAgree)
+            $('#age').on("propertychange change keyup paste input", typeAgeInput)
+            $('#phone_number_left').on("propertychange change keyup paste input", fixTextLength(3))
+            $('#phone_number_mid').on("propertychange change keyup paste input", fixTextLength(4))
+            $('#phone_number_right').on("propertychange change keyup paste input", fixTextLength(4))
+            $('#register').on("submit", submitRegister)
+            $('#running').change(toggleInterest)
+            $('#health').change(toggleInterest)
+            $('#climbing').change(toggleInterest)
+        })
+
+        function typeAgeInput() {
+            clearInvalidValue.bind(this)();
+            fixTextLength(3).bind(this)();
+        }
+
+        function clearInvalidValue() {
+            if($(this).val() === '' || Number($(this).val()) <= 0) {
+                $(this).val('');
+            }
+        }
+
+        function fixTextLength(n) {
+            return function() {
+                if($(this).val().length > 3) {
+                    $(this).val($(this).val().slice(0, n));
+                }
+            }
+        }
+
+        function togglePrivacyAgree() {
+            if(this.checked) {
+                $('#register-btn').prop('disabled', false)
+            } else {
+                $('#register-btn').prop('disabled', true)
+            }
+        }
+        function initCheckbox() {
+            $('#running').val(this.checked);
+            $('#health').val(this.checked);
+            $('#climbing').val(this.checked);
+            $('#privacy-agree').val(this.checked);
+        }
+
+        function submitRegister(event) {
             event.preventDefault();
-            const data = {
+            register({
                 user_id: $('#user_id').val(),
                 password: $('#password').val(),
                 password_confirm: $('#password_confirm').val(),
@@ -95,25 +143,43 @@
                 nickname: $('#nickname').val(),
                 gender: $('#gender').val(),
                 age: $('#age').val(),
-                phone_number: $('#phone_number').val(),
-                interests: []
-            }
-            $('#interests').children('input').each(function() {
-                if($(this).is(':checked')) data.interests.push($(this).attr('name'))
+                phone_number: $('#phone_number_left').val() + '-' + $('#phone_number_mid').val() + '-' + $('#phone_number_right').val(),
+                interests: getInterests()
+            })
+        }
+
+        function getInterests() {
+            const interests = [];
+            $('#interests').children('label').each(function() {
+                const $input = $(this).find('input')
+                if($input.is(':checked')) interests.push($input.attr('id'))
             });
+            return interests;
+        }
+
+        function register({ user_id, password, password_confirm, name, nickname, gender, age, phone_number, interests }) {
             $.ajax({
                 type: "POST",
                 url: "/auth/register",
-                data: {...data, interests: data.interests},
+                data: { user_id, password, password_confirm, name, nickname, gender, age, phone_number, interests },
                 success: function (response) {
                     if(response.result === 'success') {
                         alert("회원가입 성공")
                     } else {
-                        console.error('err')
+                        $("#error_message").text(response.msg)
                     }
                 }
             })
-        })
+            
+        }
+            
+        function toggleInterest() {
+            if(this.checked) {
+                $(this).closest('label').removeClass('is-outlined')
+            } else {
+                $(this).closest('label').addClass('is-outlined')
+            }
+        }
     </script>
 </body>
 </html>
