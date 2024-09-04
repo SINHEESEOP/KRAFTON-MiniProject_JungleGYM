@@ -1,9 +1,19 @@
+
 from flask import render_template
-from app.ranking.services import get_all_rankings
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
+from app.ranking.services import get_all_rankings, get_level
 from app.ranking.__init__ import ranking_bp
 
+
 @ranking_bp.route('/', methods=['GET'])
-def rankingPage():
-    print("되냐?")
+@jwt_required(locations=['cookies'])
+def ranking_page():
+
+    current_user = get_jwt_identity()
+
     rankings = get_all_rankings()
-    return render_template('ranking.html', rankings=rankings)
+    level = get_level(current_user)
+
+    print(level)
+    return render_template('ranking.html', rankings=rankings, level=level)

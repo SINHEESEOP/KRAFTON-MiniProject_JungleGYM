@@ -23,8 +23,8 @@ def register_service(user_id, password, name, nickname, gender, age, phone_numbe
   # hashed_password = generate_password_hash(password)
   ## in local MAC
   hashed_password = generate_password_hash(password, method="pbkdf2:sha256")
-  mongo.db.users.insert_one({
-    "user_id": user_id, "password": hashed_password, "name": name, "nickname": nickname, "gender": gender, "birth": age, "phone_number": phone_number, "interests": interests
+  new_user = mongo.db.users.insert_one({
+    "user_id": user_id, "password": hashed_password, "name": name, "nickname": nickname, "gender": gender, "birth": age, "phone_number": phone_number, "interests": interests, "total_ex_time": 600
   })
-  return 'y'
+  return new_user
   

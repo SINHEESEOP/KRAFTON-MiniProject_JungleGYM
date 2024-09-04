@@ -222,9 +222,11 @@
 							class="form-control"
 							name="location"
 							placeholder="장소"
+							id="locationInput"
 							required
 					/>
-					<div id="map" style="width:100%;height:400px;"></div>
+					<input type="hidden" id="latitudeInput" name="latitude">
+					<input type="hidden" id="longitudeInput" name="longitude">
 					<textarea
 							class="form-control"
 							name="notice"
@@ -284,6 +286,36 @@
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
 
+{# 팝업쪽 함수 ///////////////////// #}
+<script>
+
+    document.getElementById('locationInput').addEventListener('click', function () {
+        // 팝업 창의 크기
+        var popupWidth = 800;
+        var popupHeight = 520;
+
+        // 화면 크기
+        var screenWidth = window.screen.width;
+        var screenHeight = window.screen.height;
+
+        // 팝업 창을 화면 중앙에 배치하기 위해 계산
+        var left = (screenWidth / 2) - (popupWidth / 2);
+        var top = (screenHeight / 2) - (popupHeight / 2);
+
+        // 팝업 창을 중앙에 띄우는 코드
+        window.open('/map', 'popupWindow', `width=${popupWidth},height=${popupHeight},left=${left},top=${top},scrollbars=yes`);
+    });
+
+    // 팝업에서 값을 받아오는 함수
+    function setLocationData(placeName, address, latitude, longitude) {
+        document.getElementById('locationInput').value = `${placeName} (${address})`;
+        document.getElementById('latitudeInput').value = latitude;
+        document.getElementById('longitudeInput').value = longitude;
+    }
+
+</script>
+
+{#/////////////////////////////#}
 
 <script>
 
@@ -443,18 +475,6 @@
             <h5>Participants</h5>
             ${participantList}
         `;
-    }
-</script>
-
-<script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=8zii23izq4&callback=initMap"></script>
-<script type="text/javascript">
-    var map = null;
-
-    function initMap() {
-        map = new naver.maps.Map('map', {
-            center: new naver.maps.LatLng(37.3595704, 127.105399),
-            zoom: 10
-        });
     }
 </script>
 
