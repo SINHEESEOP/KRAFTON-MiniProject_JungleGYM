@@ -12,6 +12,8 @@ class Meeting:
         time,
         max_people,
         location,
+        latitude,
+        longitude,
         notice="",
         equipment="",
         leader_info="",
@@ -25,8 +27,10 @@ class Meeting:
         self.notice = notice
         self.equipment = equipment
         self.leader_info = leader_info
+        self.latitude = latitude
+        self.longitude = longitude
         self.leader_id = leader_id  # ID of the user who created the meeting
-        self.participant_ids = []  # List of user IDs who have signed up
+        self.participant_ids = [leader_id]  # List of user IDs who have signed up
         self.created_at = datetime.utcnow()
 
     def save(self):
@@ -42,6 +46,8 @@ class Meeting:
             "leader_id": self.leader_id,
             "participant_ids": self.participant_ids,
             "created_at": self.created_at,
+            "latitude": self.latitude,
+            "longitude": self.longitude,            
         }
         mongo.db.meetings.insert_one(meeting_data)
 
