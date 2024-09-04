@@ -13,14 +13,12 @@ from bson.objectid import ObjectId
 from app.ranking.models import User
 from app.meetings.services import clean_leader_info
 from app.auth.services import myinfo_service
-
 from datetime import datetime
 
 
 @meetings_bp.route("/", methods=["GET", "POST"])
 @jwt_required(locations=["cookies"])
 def list_meetings():
-
     current_user = get_jwt_identity()
 
     if request.method == "POST":
@@ -61,7 +59,7 @@ def list_meetings():
             location=location,
             notice=notice,
             equipment=equipment,
-            leader_info=user_id,
+            leader_info=current_user,
             latitude=latitude,
             longitude=longitude,
         )
@@ -70,6 +68,7 @@ def list_meetings():
         return jsonify({"result": "success"})
 
     meetings = Meeting.get_all_meetings()
+    print(meetings)
     for i in range(0, len(meetings)):
         meetings[i]["participant_cnt"] = str(len(meetings[i]["participant_ids"]))
     myinfo = myinfo_service(current_user)
@@ -99,7 +98,6 @@ def list_meetings():
 
 @meetings_bp.route("/details/<meeting_id>", methods=["GET"])
 def get_meeting_details(meeting_id):
-
     print(meeting_id + "이거맞냐")
     try:
         meeting = Meeting.get_meeting_by_id(meeting_id)
@@ -111,12 +109,25 @@ def get_meeting_details(meeting_id):
         leader_info1 = meeting.get("leader_info", {})
         leader_info2 = User.find_one(leader_info1)
         leader_info = clean_leader_info(leader_info2)
-        print(leader_info)
 
-        participants_info = meeting.get("participants", [])
-        print(participants_info)
+        latitude = meeting.get("latitude")
+        longitude = meeting.get("longitude")
+        print(latitude, longitude)
 
-        return jsonify({"leader": leader_info, "participants": participants_info})
+        participants_info = meeting.get("participant_ids", [])
+        # print(participants_info2)
+        #
+        # participants_info = []
+        # for info in participants_info2:
+        #     participants_info.append(User.find_one_object_del(info))
+        #
+        # print(participants_info)
+
+
+
+        return jsonify({"leader": leader_info, "participants": participants_info,
+                        "latitude": latitude, "longitude": longitude})
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

@@ -22,3 +22,11 @@ class User:
         user = db['users'].find_one({'user_id': user_id})
         return user
 
+    def find_one_object_del(cls, user_id):
+        user = db['users'].find_one({'user_id': user_id})
+
+        if user and '_id' in user:
+            del user['_id']  # ObjectId 필드를 삭제
+
+        return user
+

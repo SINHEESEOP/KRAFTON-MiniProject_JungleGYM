@@ -344,167 +344,214 @@
               name="notice"
               id="notice"
               placeholder="공지사항"
-            ></textarea>
-          </div>
-          <div class="form-group">
-            <input
-              type="text"
-              name="equipment"
-              id="equipment"
-              placeholder="준비물(선택)"
-            />
-          </div>
-          <input type="hidden" name="category" id="category" value="러닝" />
-          <button type="submit" class="btn-submit">Make</button>
-        </form>
-      </div>
-    </div>
+            ></textarea> 
+			</div>
+			<div class="form-group">
+				<input
+						type="text"
+						name="equipment"
+						id="equipment"
+						placeholder="준비물(선택)"
+				/>
+			</div>
+			<input type="hidden" name="category" id="category" value="러닝"/>
+			<button type="submit" class="btn-submit">Make</button>
+		</form>
+	</div>
+</div>
 
-    <div id="groupInfoModal" class="modal">
-      <div class="modal-content">
-        <span onclick="closeModal()">&times;</span>
+<div id="groupInfoModal" class="modal">
+	<div class="modal-content">
+		<span onclick="closeModal()">&times;</span>
+		
+		<div class="group-info">
+			<h2>Group Info.</h2>
+			
+			<div class="leader-info">
+				<h3>Leader Info.</h3>
+				<div class="leader-details">
+					
+					<div>
+						<strong id="leader-name" style="margin-right: 30px"></strong>
+						<span id="leader-gender" style="margin-right: 30px"></span>
+						<span id="leader-birth"></span>
+						<p id="leader-phone"></p>
+					</div>
+					
+					<div id="leader-level" style="margin-bottom: 40px"></div>
+				</div>
+			</div>
+			
+			<div id="map" style="width:100%;height:250px;"></div>
+			
+			<div class="member-info">
+				<h5>Member Info.</h5>
+				<div class="member-details"> {# 여기에 나중에 멤버 많아지면 스크롤로 변경 css 추가 및 높이 설정해줘야함.#}
+					<div>
+						<strong style="margin-right: 10px" class="member-name">김와글</strong>
+						<span style="margin-right: 10px" class="member-gender">여자</span>
+						<span style="margin-right: 10px" class="member-age">24</span>
+						<span class="member-level">Lv. 3</span>
+					</div>
+				</div>
+			</div>
 
-        <div class="group-info">
-          <h2>Group Info.</h2>
 
-          <div class="leader-info">
-            <h3>Leader Info.</h3>
-            <div class="leader-details">
-              <div>
-                <strong id="leader-name" style="margin-right: 30px"></strong>
-                <span id="leader-gender" style="margin-right: 30px"></span>
-                <span id="leader-birth"></span>
-                <p id="leader-phone"></p>
-              </div>
+		</div>
+	</div>
+</div>
 
-              <div id="leader-level" style="margin-bottom: 40px"></div>
-            </div>
-          </div>
 
-          <div id="map" style="width: 100%; height: 250px"></div>
+{# 팝업쪽 함수 ///////////////////// #}
+<script>
 
-          <div class="member-info">
-            <h3>Member Info.</h3>
-            <div class="member-details">
-              <div>
-                <strong>김와글</strong><span>여자 1996</span>
-                <div class="level-badge">Lv. 3</div>
-              </div>
-              <div class="member-details">
-                <div><strong>이글</strong><span>남자 2001</span></div>
-                <div class="level-badge">Lv. 3</div>
-              </div>
-              <div class="member-details">
-                <div><strong>박정글</strong><span>여자 2002</span></div>
-                <div class="level-badge">Lv. 1</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    document.getElementById('location').addEventListener('click', function () {
+        // 팝업 창의 크기
+        var popupWidth = 800;
+        var popupHeight = 520;
 
-    {# 팝업쪽 함수 ///////////////////// #}
-    <script>
-      document
-        .getElementById("location")
-        .addEventListener("click", function () {
-          // 팝업 창의 크기
-          var popupWidth = 800;
-          var popupHeight = 520;
+        // 화면 크기
+        var screenWidth = window.screen.width;
+        var screenHeight = window.screen.height;
 
-          // 화면 크기
-          var screenWidth = window.screen.width;
-          var screenHeight = window.screen.height;
+        // 팝업 창을 화면 중앙에 배치하기 위해 계산
+        var left = (screenWidth / 2) - (popupWidth / 2);
+        var top = (screenHeight / 2) - (popupHeight / 2);
 
-          // 팝업 창을 화면 중앙에 배치하기 위해 계산
-          var left = screenWidth / 2 - popupWidth / 2;
-          var top = screenHeight / 2 - popupHeight / 2;
+        // 팝업 창을 중앙에 띄우는 코드
+        window.open('/map', 'popupWindow', `width=${popupWidth},height=${popupHeight},left=${left},top=${top},scrollbars=yes`);
+    });
 
-          // 팝업 창을 중앙에 띄우는 코드
-          window.open(
-            "/map",
-            "popupWindow",
-            `width=${popupWidth},height=${popupHeight},left=${left},top=${top},scrollbars=yes`
-          );
-        });
+    // 팝업에서 값을 받아오는 함수
+    function setLocationData(placeName, address, latitude, longitude) {
+        document.getElementById('location').value = `${placeName} (${address})`;
+        document.getElementById('latitudeInput').value = latitude;
+        document.getElementById('longitudeInput').value = longitude;
+    }
 
-      // 팝업에서 값을 받아오는 함수
-      function setLocationData(placeName, address, latitude, longitude) {
-        document.getElementById("location").value = `${placeName} (${address})`;
-        document.getElementById("latitudeInput").value = latitude;
-        document.getElementById("longitudeInput").value = longitude;
-      }
-    </script>
+</script>
 
-    {#/////////////////////////////#}
+{#/////////////////////////////#}
 
-    <script>
-          var modal = document.getElementById("myModal");
-          var btn = document.getElementById("openModal");
-          var span = document.getElementsByClassName("close-btn")[0];
-          var categoryInput = document.getElementById("category");
-          var meetingIdInput = document.getElementById("meeting_id");
+<script>
+    var modal = document.getElementById("myModal");
+    var btn = document.getElementById("openModal");
+    var span = document.getElementsByClassName("close-btn")[0];
+    var categoryInput = document.getElementById("category");
+    var meetingIdInput = document.getElementById("meeting_id");
 
-          var detailsModal = document.getElementById("detailsModal");
-          var closeDetailsBtn = document.getElementsByClassName("close-btn")[1];
+    var detailsModal = document.getElementById("detailsModal");
+    var closeDetailsBtn = document.getElementsByClassName("close-btn")[1];
 
-          function getCookie(name) {
-              const value = `; ${document.cookie}`;
-              const parts = value.split(`; ${name}=`);
-              if (parts.length === 2) return parts.pop().split(';').shift();
-            }
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
 
-          document.querySelector('#create_meeting').addEventListener('submit', async (event) => {
-              event.preventDefault();
-              try {
-                  const response = await fetch('/meetings', {
-                  method: 'POST',
-                  credentials: 'same-origin',
-                  headers: {
-                      'X-CSRF-TOKEN': getCookie('csrf_access_token'),
-                  },
-                  body: new FormData(event.target)
-                  });
-                  const result = response.json();
+    document.querySelector('#create_meeting').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        try {
+            const response = await fetch('/meetings', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRF-TOKEN': getCookie('csrf_access_token'),
+                },
+                body: new FormData(event.target)
+            });
+            const result = response.json();
 
-                  window.location.reload();
-                  return result;
-              } catch (error) {
-                  alert('실패')
-                  console.error(error);
-              }
-          })
+            window.location.reload();
+            return result;
+        } catch (error) {
+            alert('실패')
+            console.error(error);
+        }
+    })
 
-          // Modal 열기
-          btn.onclick = function () {
-              modal.style.display = "flex";
-              resetModal();
-          };
+    // Modal 열기
+    btn.onclick = function () {
+        modal.style.display = "flex";
+        resetModal();
+    };
 
-          // Modal 닫기
-          span.onclick = function () {
-              modal.style.display = "none";
-          };
+    // Modal 닫기
+    span.onclick = function () {
+        modal.style.display = "none";
+    };
 
-          window.onclick = function (event) {
-              if (event.target == modal) {
-                  modal.style.display = "none";
-              }
-          };
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    };
 
-          // 카테고리 버튼 클릭 시 색깔 변경 및 값 설정
-          document.querySelectorAll(".category-button").forEach(function (button) {
-              button.onclick = function () {
-                  document.querySelectorAll(".category-button").forEach(function (btn) {
-                      btn.classList.remove("active");
-                  });
-                  this.classList.add("active");
-                  categoryInput.value = this.getAttribute("data-category");
-              };
-          });
+    // 카테고리 버튼 클릭 시 색깔 변경 및 값 설정
+    document.querySelectorAll(".category-button").forEach(function (button) {
+        button.onclick = function () {
+            document.querySelectorAll(".category-button").forEach(function (btn) {
+                btn.classList.remove("active");
+            });
+            this.classList.add("active");
+            categoryInput.value = this.getAttribute("data-category");
+        };
+    });
 
-          function toggleAttend(button) {
+
+    function openEditModal(meetingId) {
+        fetch(`/meetings/edit/${meetingId}`, {method: "POST"})
+            .then((response) => response.json())
+            .then((data) => {
+                meetingIdInput.value = data._id.$oid;
+                document.getElementById("date").value = data.date;
+                document.getElementById("time").value = data.time;
+                document.getElementById("max_people").value = data.max_people;
+                document.getElementById("location").value = data.location;
+                document.getElementById("notice").value = data.notice;
+                document.getElementById("equipment").value = data.equipment;
+                document.getElementById("leader_info").value = data.leader_info;
+                document
+                    .querySelectorAll(".category-button")
+                    .forEach(function (button) {
+                        if (button.getAttribute("data-category") === data.category) {
+                            button.classList.add("active");
+                            categoryInput.value = data.category;
+                        } else {
+                            button.classList.remove("active");
+                        }
+                    });
+                modal.style.display = "flex";
+            });
+    }
+
+    function deleteMeeting(meetingId) {
+        if (confirm("정말 삭제하시겠습니까?")) {
+            fetch(`/meetings/delete/${meetingId}`, {method: "POST"})
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.result === "success") {
+                        location.reload();
+                    } else {
+                        alert("삭제에 실패했습니다.");
+                    }
+                });
+        }
+    }
+
+    closeDetailsBtn.onclick = function () {
+        detailsModal.style.display = "none";
+    };
+
+
+    window.onclick = function (event) {
+        if (event.target == detailsModal) {
+            detailsModal.style.display = "none";
+        }
+    };
+
+  
+             function toggleAttend(button) {
             if (button.innerText === "참석") {
                 button.innerText = "취소";
                 button.classList.remove("btn-attend");
@@ -515,161 +562,85 @@
                 button.classList.add("btn-attend");
             }
             }
+  
+    function openDetailsModal(meetingId) {
+        document.getElementById("groupInfoModal").style.display = "flex"
 
+        $.ajax({
+            type: "GET",
+            url: `/meetings/details/${meetingId}`,
+            data: {},
+            success: function (response) {
+                console.log(response["participants"])
+                console.log(response["leader"])
 
-          function openEditModal(meetingId) {
-              fetch(`/meetings/edit/${meetingId}`, {method: "POST"})
-                  .then((response) => response.json())
-                  .then((data) => {
-                      meetingIdInput.value = data._id.$oid;
-                      document.getElementById("date").value = data.date;
-                      document.getElementById("time").value = data.time;
-                      document.getElementById("max_people").value = data.max_people;
-                      document.getElementById("location").value = data.location;
-                      document.getElementById("notice").value = data.notice;
-                      document.getElementById("equipment").value = data.equipment;
-                      document.getElementById("leader_info").value = data.leader_info;
-                      document
-                          .querySelectorAll(".category-button")
-                          .forEach(function (button) {
-                              if (button.getAttribute("data-category") === data.category) {
-                                  button.classList.add("active");
-                                  categoryInput.value = data.category;
-                              } else {
-                                  button.classList.remove("active");
-                              }
-                          });
-                      modal.style.display = "flex";
-                  });
-          }
+                const leader = response["leader"]
+                document.getElementById("leader-name").textContent = "이름 :" + leader["name"];
+                {#document.getElementById("leader-nickname").textContent = leader["nickname"];#}
+                document.getElementById("leader-gender").textContent = "성별 : " + leader["gender"];
+                document.getElementById("leader-birth").textContent = "나이 : " + leader["birth"];
+                document.getElementById("leader-phone").textContent = "번호 : " + leader["phone_number"];
+                document.getElementById("leader-level").textContent = "LV_" + ((leader["total_ex_time"] / 60) / 10 + 1)
+                console.log(response["longitude"])
+                console.log(response["latitude"])
 
-      //     function attendMeeting(meetingId) {
-      //       fetch(`/meetings/attend/${meetingId}`, {method: 'POST'})
-      //           .then(response => response.json())
-      //           .then(data => {
-      //               if (data.result === 'success') {
-      //                   const btn = document.querySelector(`button[onclick="attendMeeting('${meetingId}')"]`);
-      //                   btn.textContent = "취소";
-      //                   btn.classList.remove("btn-attend");
-      //                   btn.classList.add("btn-cancel");
-      //                   btn.setAttribute("onclick", `cancelAttendance('${meetingId}')`);
-      //               } else {
-      //                   alert("참석에 실패했습니다.");
-      //               }
-      //           })
-      //           .catch(error => {
-      //               console.error('Error attending meeting:', error);
-      //           });
-      //   }
-
-      //     function cancelAttendance(meetingId) {
-      //       fetch(`/meetings/cancel/${meetingId}`, {method: 'POST'})
-      //           .then(response => response.json())
-      //           .then(data => {
-      //               if (data.result === 'success') {
-      //                   const btn = document.querySelector(`button[onclick="cancelAttendance('${meetingId}')"]`);
-      //                   btn.textContent = "참석";
-      //                   btn.classList.remove("btn-cancel");
-      //                   btn.classList.add("btn-attend");
-      //                   btn.setAttribute("onclick", `attendMeeting('${meetingId}')`);
-      //               } else {
-      //                   alert("취소에 실패했습니다.");
-      //               }
-      //           })
-      //           .catch(error => {
-      //               console.error('Error canceling attendance:', error);
-      //           });
-      //   }
-
-          function deleteMeeting(meetingId) {
-              if (confirm("정말 삭제하시겠습니까?")) {
-                  fetch(`/meetings/delete/${meetingId}`, {method: "POST"})
-                      .then((response) => response.json())
-                      .then((data) => {
-                          if (data.result === "success") {
-                              location.reload();
-                          } else {
-                              alert("삭제에 실패했습니다.");
-                          }
-                      });
-              }
-          }
-
-          closeDetailsBtn.onclick = function () {
-              detailsModal.style.display = "none";
-          };
-
-
-          window.onclick = function (event) {
-              if (event.target == detailsModal) {
-                  detailsModal.style.display = "none";
-              }
-          };
-
-          function openDetailsModal(meetingId) {
-              document.getElementById("groupInfoModal").style.display = "flex"
-
-              setTimeout(function () {
-                  // 지도를 재렌더링
-                  map.relayout();
-
-                  // 지도의 중심을 맞추기 위해 센터 좌표를 다시 설정
-                  var center = new kakao.maps.LatLng(33.450701, 126.570667);
-                  map.setCenter(center);
-              }, 0);
-
-              $.ajax({
-                  type: "GET",
-                  url: `/meetings/details/${meetingId}`,
-                  data: {},
-                  success: function (response) {
-                      console.log(response["participants"])
-                      console.log(response["leader"])
-
-                      const leader = response["leader"]
-                      document.getElementById("leader-name").textContent = "이름 :" + leader["name"];
-                      {#document.getElementById("leader-nickname").textContent = leader["nickname"];#}
-                      document.getElementById("leader-gender").textContent = "성별 : " + leader["gender"];
-                      document.getElementById("leader-birth").textContent = "나이 : " + leader["birth"];
-                      document.getElementById("leader-phone").textContent = "번호 : " + leader["phone_number"];
-                      console.log((leader["total_ex_time"] / 60) / 10 + 1)
-                      document.getElementById("leader-level").textContent = "LV_" + ((leader["total_ex_time"] / 60) / 10 + 1)
-
-                  },
-              })
-
-          }
+								//멤버를 불러오자
 
 
 
-          function closeModal() {
-              document.getElementById("groupInfoModal").style.display = "none";
-          }
+                setTimeout(function () {
+                    // 지도를 재렌더링
+                    map.relayout();
 
-          function resetModal() {
-              meetingIdInput.value = "";
-              document.getElementById("date").value = "";
-              document.getElementById("time").value = "";
-              document.getElementById("max_people").value = "";
-              document.getElementById("location").value = "";
-              document.getElementById("notice").value = "";
-              document.getElementById("equipment").value = "";
-              document
-                  .querySelector(".category-button.active")
-                  .classList.remove("active");
-              document.querySelector(".category-button").classList.add("active");
-              categoryInput.value = "러닝";
-          }
-    </script>
+                    // 지도의 중심을 맞추기 위해 센터 좌표를 다시 설정
+                    var center = new kakao.maps.LatLng(response["longitude"], response["latitude"]);
+                    map.setCenter(center);
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script
-      type="text/javascript"
-      src="//dapi.kakao.com/v2/maps/sdk.js?appkey=91cc5e295563f8e78c0e7a0d50f72c5f&libraries=services"
-    ></script>
+                    // 마커가 표시될 위치입니다
+                    var markerPosition = new kakao.maps.LatLng(response["longitude"], response["latitude"]);
 
-    <script>
-      var mapContainer = document.getElementById("map"), // 지도를 표시할 div
+                    // 마커를 생성합니다
+                    var marker = new kakao.maps.Marker({
+                        position: markerPosition
+                    });
+
+                    // 마커가 지도 위에 표시되도록 설정합니다
+                    marker.setMap(map);
+                }, 0);
+            },
+        })
+
+    }
+
+    function closeModal() {
+        document.getElementById("groupInfoModal").style.display = "none";
+    }
+
+    function resetModal() {
+        meetingIdInput.value = "";
+        document.getElementById("date").value = "";
+        document.getElementById("time").value = "";
+        document.getElementById("max_people").value = "";
+        document.getElementById("location").value = "";
+        document.getElementById("notice").value = "";
+        document.getElementById("equipment").value = "";
+        document
+            .querySelector(".category-button.active")
+            .classList.remove("active");
+        document.querySelector(".category-button").classList.add("active");
+        categoryInput.value = "러닝";
+    }
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript"
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=91cc5e295563f8e78c0e7a0d50f72c5f&libraries=services"></script>
+
+
+<script>
+
+
+    var mapContainer = document.getElementById('map'), // 지도를 표시할 div
         mapOption = {
           center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
           level: 3, // 지도의 확대 레벨
