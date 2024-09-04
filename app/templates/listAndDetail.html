@@ -196,7 +196,6 @@
     <div class="container">
       <div class="level-info">
         <div class="level-bar">
-          <div class="level-bar-progress" style="width: {{ progress }}%;"></div>
         </div>
         <div class="level-text">Lv {{ level }} - {{ progress }}%</div>
       </div>
@@ -239,7 +238,7 @@
         {% endfor %}
       </ul>
     </div>
-    <a href="#" class="btn-add" id="openModal">+</a>
+    <button class="btn-add" id="openModal">+</button>
 
     <!-- Modal -->
     <div id="myModal" class="modal">
@@ -247,7 +246,7 @@
         <span class="close-btn">&times;</span>
         <h1>Make your GYM</h1>
         <p>What’s your GYM?</p>
-        <form method="POST" action="{{ url_for('meetings.list_meetings') }}">
+        <form id="create_meeting">
           <input type="hidden" name="meeting_id" id="meeting_id" />
           <div class="category-buttons">
             <button
@@ -326,6 +325,7 @@
     </div>
 
     <script>
+
       var modal = document.getElementById("myModal");
       var btn = document.getElementById("openModal");
       var span = document.getElementsByClassName("close-btn")[0];
@@ -334,6 +334,33 @@
 
       var detailsModal = document.getElementById("detailsModal");
       var closeDetailsBtn = document.getElementsByClassName("close-btn")[1];
+
+      function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+      }
+
+      document.querySelector('#create_meeting').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        try {
+          const response = await fetch('/meetings', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+              'X-CSRF-TOKEN': getCookie('csrf_access_token'),
+            },
+            body: new FormData(event.target)
+          });
+          const result = response.json();
+
+          window.location.reload();
+          return result;
+        } catch (error) {
+          alert('실패')
+          console.error(error);
+        }
+      })
 
       // Modal 열기
       btn.onclick = function () {

@@ -1,5 +1,4 @@
 from .models import Meeting
-import requests
 
 def create_meeting(
     category, date, time, max_people, location, notice, equipment, leader_info
