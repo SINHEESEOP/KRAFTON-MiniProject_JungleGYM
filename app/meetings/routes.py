@@ -12,6 +12,7 @@ from bson.objectid import ObjectId
 
 from app.ranking.models import User
 from app.meetings.services import clean_leader_info
+from app.auth.services import myinfo_service
 
 @meetings_bp.route("/", methods=["GET", "POST"])
 @jwt_required(locations=['cookies'])
@@ -33,40 +34,44 @@ def list_meetings():
         latitude = request.form.get("latitude")
         longitude = request.form.get("longitude")
 
-        if meeting_id:
-            # 수정 로직
-            meeting = Meeting.get_meeting_by_id(meeting_id)
-            meeting_data = {
-                "category": category,
-                "date": date,
-                "time": time,
-                "max_people": max_people,
-                "location": location,
-                "notice": notice,
-                "equipment": equipment,
-                "leader_info": user_id,
-            }
-            meeting.update(meeting_data)
-        else:
+        # if meeting_id:
+        #     # 수정 로직
+        #     meeting = Meeting.get_meeting_by_id(meeting_id)
+        #     meeting_data = {
+        #         "category": category,
+        #         "date": date,
+        #         "time": time,
+        #         "max_people": max_people,
+        #         "location": location,
+        #         "notice": notice,
+        #         "equipment": equipment,
+        #         "leader_info": user_id,
+        #     }
+        #     meeting.update(meeting_data)
+        # else:
             # 생성 로직
-            new_meeting = Meeting(
-                category=category,
-                date=date,
-                time=time,
-                max_people=max_people,
-                location=location,
-                notice=notice,
-                equipment=equipment,
-                leader_info=user_id,
-                latitude=latitude,
-                longitude=longitude
-            )
-            new_meeting.save()
+        new_meeting = Meeting(
+            category=category,
+            date=date,
+            time=time,
+            max_people=max_people,
+            location=location,
+            notice=notice,
+            equipment=equipment,
+            leader_info=user_id,
+            latitude=latitude,
+            longitude=longitude
+        )
+        new_meeting.save()
 
-        return redirect(url_for("meetings.list_meetings"))
+        return jsonify({'result': 'success'})
 
     meetings = Meeting.get_all_meetings()
-    return render_template("listAndDetail.html", meetings=meetings, current_user=current_user)
+    for i in range(0, len(meetings)):
+        meetings[i]['participant_cnt'] = str(len(meetings[i]['participant_ids']))
+    myinfo = myinfo_service(current_user)
+    my_total_ex_time = myinfo.get('total_ex_time')
+    return render_template("listAndDetail.html", meetings=meetings, current_user=current_user, level=int(my_total_ex_time / 100), progress=int(my_total_ex_time % 100), my_total_ex_time=my_total_ex_time)
 
 
 @meetings_bp.route("/details/<meeting_id>", methods=["GET"])
