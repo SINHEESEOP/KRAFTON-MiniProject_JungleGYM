@@ -1,6 +1,9 @@
 # Jungle GYM
+
 Jungle GYM is an application that helps you find your running mate.
+
 ## 설치
+
 ```
 # Create venv
 python3 -m venv .venv
@@ -17,12 +20,17 @@ pip install pymongo
 pip install Jinja2
 pip install python-dotenv
 pip install wtforms
+pip install flask_jwt_extended
+pip install flask_pymongo
+pip install flask_wtf
 
 
 # Run
 flask run
 ```
+
 ## 파일 구조
+
 ```
 JungleGYM/
 ├── app/

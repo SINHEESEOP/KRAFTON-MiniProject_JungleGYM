@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise List</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: rgba(0, 0, 0, 0.1);
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .container {
+        max-width: 500px;
+        width: 100%;
+        height: 90vh;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        overflow-y: auto;
+        margin: 0 auto;
+      }
+      .level-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+      .level-bar {
+        width: 70%;
+        height: 20px;
+        background-color: #e0e0e0;
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+      }
+      .level-bar-progress {
+        height: 100%;
+        background-color: #76c7c0;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      .level-text {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 30%;
+        padding-left: 10px;
+        font-weight: bold;
+      }
+      .meeting-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        cursor: pointer; /* Make the entire card clickable */
+      }
+      .meeting-details {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        margin-right: 10px;
+      }
+      .meeting-details h2 {
+        margin: 0;
+        font-size: 1rem;
+        color: #333;
+      }
+      .meeting-details p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+      }
+      .btn-action {
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        font-size: 14px;
+        color: #fff;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .btn-edit {
+        background-color: #4caf50;
+      }
+      .btn-cancel {
+        background-color: #f44336;
+      }
+      .btn-attend {
+        background-color: #2196f3;
+      }
+      .btn-add {
+        position: absolute;
+        bottom: 40px;
+        right: 40px;
+        width: 50px;
+        height: 50px;
+        background-color: #2196f3;
+        border-radius: 50%;
+        color: #fff;
+        font-size: 30px;
+        text-align: center;
+        line-height: 50px;
+        text-decoration: none;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+      }
+      .modal-content {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+        width: 450px;
+      }
+      .close-btn {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+      .close-btn:hover,
+      .close-btn:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="level-info">
+        <div class="level-bar">
+          <div class="level-bar-progress" id="level-bar-progress"></div>
+        </div>
+        <div class="level-text">Lv {{ level }} - {{ progress }}%</div>
+      </div>
+      <ul id="meeting-list">
+        {% for meeting in meetings %}
+        <li
+          class="meeting-card"
+          onclick="openDetailsModal('{{ meeting._id }}')"
+          data-id="{{ meeting._id }}"
+          data-is-participant="{{ meeting.is_participant }}"
+          data-is-owner="{{ meeting.is_owner }}"
+        >
+          <div class="meeting-details">
+            <h2>{{ meeting.date }} {{ meeting.day }}</h2>
+            <p>{{ meeting.time }} | {{ meeting.location }}</p>
+            <p>{{ meeting.participants }} / {{ meeting.max_people }}인</p>
+          </div>
+          <div class="meeting-actions">
+            {% if meeting.is_owner %}
+            <button
+              class="btn-action btn-edit"
+              onclick="openEditModal(event, '{{ meeting._id }}')"
+            >
+              수정
+            </button>
+            {% elif meeting.is_participant %}
+            <button
+              class="btn-action btn-cancel"
+              onclick="deleteMeeting(event, '{{ meeting._id }}')"
+            >
+              취소
+            </button>
+            {% else %}
+            <button
+              class="btn-action btn-attend"
+              onclick="attendMeeting(event, '{{ meeting._id }}')"
+            >
+              참석
+            </button>
+            {% endif %}
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <a href="#" class="btn-add" id="openModal">+</a>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+      <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h1>Make your GYM</h1>
+        <form method="POST" action="{{ url_for('meetings.list_meetings') }}">
+          <input type="hidden" name="meeting_id" id="meeting_id" />
+          <div class="category-buttons">
+            <button type="button" class="category-button active">#러닝</button>
+            <button type="button" class="category-button">#헬스</button>
+            <button type="button" class="category-button">#클라이밍</button>
+          </div>
+          <div class="form-group">
+            <input
+              type="date"
+              name="date"
+              id="date"
+              placeholder="날짜"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <input
+              type="time"
+              name="time"
+              id="time"
+              placeholder="시간"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <input
+              type="number"
+              name="max_people"
+              id="max_people"
+              placeholder="최대 인원"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <input
+              type="text"
+              name="location"
+              id="location"
+              placeholder="장소"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <textarea
+              name="notice"
+              id="notice"
+              placeholder="공지사항"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <input
+              type="text"
+              name="equipment"
+              id="equipment"
+              placeholder="준비물(선택)"
+            />
+          </div>
+          <input type="hidden" name="category" id="category" value="러닝" />
+          <div class="form-group">
+            <input
+              type="text"
+              name="leader_info"
+              id="leader_info"
+              placeholder="리더 정보"
+              required
+            />
+          </div>
+          <button type="submit" class="btn-submit">Make</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal for details -->
+    <div id="detailsModal" class="modal">
+      <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h1>Group Info</h1>
+        <div id="leader-info">
+          <h2>Leader Info:</h2>
+          <p>Name: <span id="leader-name"></span></p>
+          <p>Gender: <span id="leader-gender"></span></p>
+          <p>Birth Year: <span id="leader-birth"></span></p>
+          <p>Contact: <span id="leader-contact"></span></p>
+          <p>Level: Lv <span id="leader-level"></span></p>
+        </div>
+        <div id="map">
+          <!-- Map will be loaded here -->
+        </div>
+        <div id="participants">
+          <h2>Participants:</h2>
+          <ul id="participants-list">
+            <!-- Participants will be listed here -->
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var progressBar = document.getElementById("level-bar-progress");
+        var progress = {{ progress }}; // Replace with actual progress from backend
+        progressBar.style.width = progress + "%";
+
+        // Add click event listener for all meeting cards
+        document.querySelectorAll(".meeting-card").forEach(function (card) {
+          card.addEventListener("click", function (event) {
+            var meetingId = card.getAttribute("data-id");
+            openDetailsModal(meetingId);
+          });
+        });
+      });
+
+      var modal = document.getElementById("myModal");
+      var btn = document.getElementById("openModal");
+      var span = document.getElementsByClassName("close-btn")[0];
+      var categoryInput = document.getElementById("category");
+      var meetingIdInput = document.getElementById("meeting_id");
+
+      var detailsModal = document.getElementById("detailsModal");
+      var closeDetailsBtn = document.getElementsByClassName("close-btn")[1];
+
+      btn.onclick = function () {
+        modal.style.display = "flex";
+        resetModal();
+      };
+
+      span.onclick = function () {
+        modal.style.display = "none";
+      };
+
+      window.onclick = function (event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      };
+
+      function openEditModal(event, meetingId) {
+        event.stopPropagation(); // Prevent the modal from opening when clicking the edit button
+        fetch(`/meetings/edit/${meetingId}`, { method: "POST" })
+          .then((response) => response.json())
+          .then((data) => {
+            meetingIdInput.value = data._id.$oid;
+            document.getElementById("date").value = data.date;
+            document.getElementById("time").value = data.time;
+            document.getElementById("max_people").value = data.max_people;
+            document.getElementById("location").value = data.location;
+            document.getElementById("notice").value = data.notice;
+            document.getElementById("equipment").value = data.equipment;
+            document.getElementById("leader_info").value = data.leader_info;
+            document
+              .querySelectorAll(".category-button")
+              .forEach(function (button) {
+                if (button.textContent.replace("#", "") === data.category) {
+                  button.classList.add("active");
+                  categoryInput.value = data.category;
+                } else {
+                  button.classList.remove("active");
+                }
+              });
+            modal.style.display = "flex";
+          });
+      }
+
+      function deleteMeeting(event, meetingId) {
+        event.stopPropagation(); // Prevent the modal from opening when clicking the delete button
+        if (confirm("정말 삭제하시겠습니까?")) {
+          fetch(`/meetings/delete/${meetingId}`, { method: "POST" })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.result === "success") {
+                location.reload();
+              } else {
+                alert("삭제에 실패했습니다.");
+              }
+            });
+        }
+      }
+
+      closeDetailsBtn.onclick = function () {
+        detailsModal.style.display = "none";
+      };
+
+      window.onclick = function (event) {
+        if (event.target == detailsModal) {
+          detailsModal.style.display = "none";
+        }
+      };
+
+      function openDetailsModal(meetingId) {
+        fetch(`/meetings/details/${meetingId}`)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            document.getElementById("leader-name").textContent =
+              data.leader.name;
+            document.getElementById("leader-gender").textContent =
+              data.leader.gender;
+            document.getElementById("leader-birth").textContent =
+              data.leader.birth_year;
+            document.getElementById("leader-contact").textContent =
+              data.leader.contact;
+            document.getElementById("leader-level").textContent =
+              data.leader.level;
+
+            var participantsList = document.getElementById("participants-list");
+            participantsList.innerHTML = "";
+            data.participants.forEach(function (participant) {
+              var li = document.createElement("li");
+              li.textContent =
+                participant.name +
+                " (" +
+                participant.gender +
+                ", " +
+                participant.birth_year +
+                ")";
+              participantsList.appendChild(li);
+            });
+
+            detailsModal.style.display = "flex";
+          })
+          .catch((error) => {
+            console.error("Error fetching meeting details:", error);
+            alert("Failed to fetch meeting details.");
+          });
+      }
+
+      function attendMeeting(event, meetingId) {
+        event.stopPropagation(); // Prevent the modal from opening when clicking the attend button
+        fetch(`/meetings/attend/${meetingId}`, { method: "POST" })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.result === "success") {
+              // Change the button to '취소' and move the card to the top
+              const meetingCard = document.querySelector(
+                `li[data-id="${meetingId}"]`
+              );
+              meetingCard.querySelector(".btn-action").textContent = "취소";
+              meetingCard.querySelector(".btn-action").classList.remove(
+                "btn-attend"
+              );
+              meetingCard.querySelector(".btn-action").classList.add(
+                "btn-cancel"
+              );
+              meetingCard.querySelector(".btn-action").setAttribute(
+                "onclick",
+                `deleteMeeting(event, '${meetingId}')`
+              );
+              meetingCard.querySelector(".meeting-details p:last-child").textContent =
+                data.participants + " / " + data.max_people + "인";
+
+              document
+                .getElementById("meeting-list")
+                .prepend(meetingCard); // Move the card to the top
+
+              openDetailsModal(meetingId);
+            } else {
+              alert("참석에 실패했습니다.");
+            }
+          })
+          .catch((error) => {
+            console.error("Error attending the meeting:", error);
+            alert("Failed to attend the meeting.");
+          });
+      }
+
+      function resetModal() {
+        meetingIdInput.value = "";
+        document.getElementById("date").value = "";
+        document.getElementById("time").value = "";
+        document.getElementById("max_people").value = "";
+        document.getElementById("location").value = "";
+        document.getElementById("notice").value = "";
+        document.getElementById("equipment").value = "";
+        document.getElementById("leader_info").value = "";
+        document
+          .querySelector(".category-button.active")
+          .classList.remove("active");
+        document.querySelector(".category-button").classList.add("active");
+        categoryInput.value = "러닝";
+      }
+
+      document.querySelectorAll(".category-button").forEach(function (button) {
+        button.onclick = function () {
+          document.querySelectorAll(".category-button").forEach(function (btn) {
+            btn.classList.remove("active");
+          });
+          this.classList.add("active");
+          categoryInput.value = this.textContent.replace("#", "");
+        };
+      });
+    </script>
+  </body>
+</html>
