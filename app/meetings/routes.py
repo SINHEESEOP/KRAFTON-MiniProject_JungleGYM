@@ -20,6 +20,7 @@ def list_meetings():
     current_user = get_jwt_identity()
 
     if request.method == "POST":
+        meeting_id = request.form.get("meeting_id")
         category = request.form.get("category")
         date = request.form.get("date")
         time = request.form.get("time")
