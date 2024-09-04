@@ -15,7 +15,7 @@ def login_service(user_id, password):
     return user
   return None
 
-def register_service(user_id, password, password_confirm, name, nickname, gender, age, phone_number, interests):
+def register_service(user_id, password, name, nickname, gender, age, phone_number, interests):
   user = mongo.db.users.find_one({"user_id": user_id})
   if user:
     return None

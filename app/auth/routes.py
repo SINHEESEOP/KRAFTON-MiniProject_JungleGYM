@@ -80,7 +80,7 @@ def register():
     if not regex.match(phone_number):
       return jsonify({'result': 'failed', 'msg': '올바른 전화번호를 입력해주세요.'})
 
-    result = register_service(user_id, password, password_confirm, name, nickname, gender, age, phone_number, interests)
+    result = register_service(user_id, password, name, nickname, gender, age, phone_number, interests)
     if not result:
       return jsonify({'result': 'failed', 'msg': '회원가입 실패'})
     return jsonify({'result': 'success'})
