@@ -1,5 +1,5 @@
 from flask import render_template, redirect, request, jsonify, url_for
-from app.meetings import meetings_bp
+from app.meetings.__init__ import meetings_bp
 from app.meetings.models import Meeting
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
