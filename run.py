@@ -14,7 +14,7 @@ def custom_unauthorized_response(_err):
     return redirect('/auth/login')
 
 @jwt.expired_token_loader
-def expired_token_callback():
+def expired_token_callback(jwt_header, jwt_data):
     response = redirect('/auth/login')
     unset_jwt_cookies(response)
     return response
