@@ -17,6 +17,8 @@ pip install pymongo
 pip install Jinja2
 pip install python-dotenv
 pip install wtforms
+pip install flask_jwt_extended
+pip install requests
 
 
 # Run

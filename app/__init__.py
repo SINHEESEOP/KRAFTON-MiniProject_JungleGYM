@@ -1,4 +1,4 @@
-from flask import Flask, redirect
+from flask import Flask, redirect, render_template
 from flask_pymongo import PyMongo
 import os
 
@@ -13,9 +13,9 @@ def create_app():
     mongo.init_app(app)
 
     # 블루프린트 등록
-    from app.auth import auth_bp
-    from app.meetings import meetings_bp
-    from app.ranking import ranking_bp
+    from app.auth.__init__ import auth_bp
+    from app.meetings.__init__ import meetings_bp
+    from app.ranking.__init__ import ranking_bp
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(meetings_bp, url_prefix='/meetings')
     app.register_blueprint(ranking_bp, url_prefix='/ranking')
@@ -32,5 +32,9 @@ def create_app():
     @app.route('/')
     def index():
         return redirect('/auth/login')
+
+    @app.route('/map')
+    def map():
+        return render_template("map_test.html")
 
     return app
