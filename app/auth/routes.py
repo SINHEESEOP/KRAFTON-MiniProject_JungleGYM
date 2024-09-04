@@ -1,7 +1,7 @@
 from flask import render_template, request, jsonify, make_response
 from app.auth.__init__ import auth_bp
 from app.auth.services import myinfo_service, register_service, login_service
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, set_access_cookies
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, set_access_cookies, unset_jwt_cookies
 import re
 
 @auth_bp.route('/myinfo', methods=['GET'])
@@ -16,6 +16,13 @@ def myinfo():
 def protected():
   current_user = get_jwt_identity()
   return jsonify(logged_in_as=current_user), 200
+
+@auth_bp.route('/logout', methods=['POST'])
+def logout():
+  response = jsonify({'result': 'success', "msg": "logout successful"})
+  unset_jwt_cookies(response)
+  return response
+
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -55,6 +62,7 @@ def register():
     age=request.form.get('age')
     phone_number=request.form.get('phone_number')
     interests=request.form.getlist('interests[]')
+    
     if not user_id or not password or not password_confirm or not name or not gender or not age or not phone_number:
       return jsonify({'result': 'failed', 'msg': '입력칸을 확인해주세요.'})
 

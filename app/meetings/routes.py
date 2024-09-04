@@ -5,6 +5,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.meetings.__init__ import meetings_bp
 from app.meetings.models import Meeting
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 # from app.auth.models import User
 from bson.objectid import ObjectId
@@ -19,7 +20,6 @@ def list_meetings():
     current_user = get_jwt_identity()
 
     if request.method == "POST":
-        meeting_id = request.form.get("meeting_id")
         category = request.form.get("category")
         date = request.form.get("date")
         time = request.form.get("time")
@@ -102,3 +102,14 @@ def edit_meeting_route(meeting_id):
 def delete_meeting_route(meeting_id):
     Meeting.delete(meeting_id)
     return jsonify({"result": "success"})
+
+@meetings_bp.route("/start/<meeting_id>", methods=["POST"])
+@jwt_required(locations=['cookies'])
+def start_meeting_route(meeting_id):
+    current_user = get_jwt_identity()
+    meeting = Meeting.get_meeting_by_id(meeting_id)
+    if not meeting["leader_id"] == current_user:
+        return jsonify({"result": "error", "msg": "리더가 아닙니다."})
+    
+    
+        
