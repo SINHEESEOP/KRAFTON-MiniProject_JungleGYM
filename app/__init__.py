@@ -4,12 +4,13 @@ import os
 
 mongo = PyMongo()
 
+
 def create_app():
     app = Flask(__name__)
-    app.config["MONGO_URI"] = os.getenv('MONGO_URI')  # MongoDB URI 설정
-    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+    app.config["MONGO_URI"] = os.getenv("MONGO_URI")
+    app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
     # app.config['JWT_TOKEN_LOCATION'] = ['headers', 'query_string']
-    app.config['SECRET_KEY'] = os.urandom(32)
+    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
     mongo.init_app(app)
 
     # 블루프린트 등록
@@ -29,9 +30,10 @@ def create_app():
     def internal_error(error):
         return "Internal Server Error", 500
 
-    @app.route('/')
+    # 메인 페이지
+    @app.route("/")
     def index():
-        return redirect('/auth/login')
+        return redirect("/auth/login")
 
     @app.route('/map')
     def map():
