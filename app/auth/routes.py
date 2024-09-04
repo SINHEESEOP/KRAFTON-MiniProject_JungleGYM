@@ -1,7 +1,6 @@
-from flask import redirect, render_template, flash, request, jsonify, make_response, url_for
+from flask import render_template, request, jsonify, make_response
 from app.auth.__init__ import auth_bp
 from app.auth.services import myinfo_service, register_service, login_service
-from app.auth.forms import RegisterForm
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, set_access_cookies
 import re
 
@@ -46,7 +45,6 @@ def login():
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
-  form = RegisterForm(request.form)
   if request.method == 'POST':
     user_id=request.form.get('user_id')
     password=request.form.get('password')
