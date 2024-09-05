@@ -10,11 +10,12 @@
 			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
 	/>
 	<style>
-			* {
-					padding: 0;
-					margin: 0;
-					box-sizing: border-box;
-			}
+      * {
+          padding: 0;
+          margin: 0;
+          box-sizing: border-box;
+      }
+
       body {
           font-family: Arial, sans-serif;
           background-color: rgba(0, 0, 0, 0.1);
@@ -37,17 +38,18 @@
           overflow-y: auto;
           margin: 0 auto;
       }
+
       .container-header {
-		      position: relative;
+          position: relative;
       }
 
       .rank-icon {
-		      position: absolute;
-		      color: gold;
-		      font-size: 1.25rem;
-			    top: 0;
-			    right: 0;
-		      cursor: pointer;
+          position: absolute;
+          color: gold;
+          font-size: 1.25rem;
+          top: 0;
+          right: 0;
+          cursor: pointer;
       }
 
       .level-info {
@@ -168,18 +170,19 @@
       }
 
       .modal-content {
-		      position: relative;
+          position: relative;
           background-color: #fff;
           padding: 20px;
           border-radius: 10px;
           box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
           width: 450px;
       }
+
       .times-btn {
-		      position: absolute;
-		      right: 20px;
-		      font-size: 1.5rem;
-		      cursor: pointer;
+          position: absolute;
+          right: 20px;
+          font-size: 1.5rem;
+          cursor: pointer;
       }
 
       .close-btn {
@@ -269,7 +272,10 @@
 					onclick="openDetailsModal('{{ meeting._id }}')"
 			>
 				<div class="meeting-details">
-					<h2>{{ meeting.date }} {{ meeting.day }}</h2>
+					<div>
+						<h2 style="display: inline-block">{{ meeting.title }}</h2>
+						<strong style="margin-left: 20px">{{ meeting.date }} {{ meeting.day }}</strong>
+					</div>
 					<p>{{ meeting.time }} | {{ meeting.location }}</p>
 					<p>{{ meeting.participant_cnt }} / {{ meeting.max_people }}인</p>
 				</div>
@@ -360,7 +366,16 @@
 						type="time"
 						name="time"
 						id="time"
-						placeholder="시간"
+						placeholder="시작 시간"
+						required
+				/>
+			</div>
+			<div class="form-group">
+				<input
+						type="time"
+						name="end_time"
+						id="end_time"
+						placeholder="종료 시간"
 						required
 				/>
 			</div>
@@ -412,13 +427,13 @@
 		<div class="group-info">
 
 			<h2 id="group_title"></h2>
-{#			시작 버튼 클릭 시 시간 기록, 완료 버튼 #}
-{#			거절 #}
-{#			리더가 최종적으로 완료하기 위해선 개별 처리 #}
-{#			시작 -> 그룹아이디 그룹원[] 시작시간 종료시간 생성 #}
+			{#			시작 버튼 클릭 시 시간 기록, 완료 버튼 #}
+			{#			거절 #}
+			{#			리더가 최종적으로 완료하기 위해선 개별 처리 #}
+			{#			시작 -> 그룹아이디 그룹원[] 시작시간 종료시간 생성 #}
 
-{#						 종료시간 지난 후 리더가 개별 체크를 하고 시간 일괄 처리 #}
-			<button>시작? 종료? 추방?</button>
+			{#						 종료시간 지난 후 리더가 개별 체크를 하고 시간 일괄 처리 #}
+			<button onclick="completion()">종료</button>
 			<div class="leader-info">
 				<h3>Leader Info.</h3>
 				<div class="leader-details">
@@ -516,8 +531,8 @@
     openModalBtn.onclick = function () {
         modal.style.display = "flex";
         resetModal();
-				document.getElementById('date').value = new Date().toISOString().substring(0, 10)
-				document.getElementById('time').value = new Date().toISOString().slice(11, 16);
+        document.getElementById('date').value = new Date().toISOString().substring(0, 10)
+        document.getElementById('time').value = new Date().toISOString().slice(11, 16);
     };
 
     // Modal 닫기
@@ -545,37 +560,38 @@
     async function openEditModal(meetingId) {
         modal.style.display = "flex";
         document.getElementById("meeting_id").value = meetingId;
-		    const response = await fetch(`/meetings/info/${meetingId}`, {
+        const response = await fetch(`/meetings/info/${meetingId}`, {
             method: "GET",
             credentials: 'same-origin',
             headers: {
                 'X-CSRF-TOKEN': getCookie('csrf_access_token'),
             },
-		    })
-		    const result = await response.json();
-            console.log(result);
-		    if(result.result === "fail") {
-				    return alert("불러오기 실패");
-		    }
-		    const { meeting } = result;
-		    console.log(meeting);
+        })
+        const result = await response.json();
+        console.log(result);
+        if (result.result === "fail") {
+            return alert("불러오기 실패");
+        }
+        const {meeting} = result;
+        console.log(meeting);
         document.getElementById("category").value = meeting.category
         document.querySelectorAll(".category-button").forEach(function (btn) {
             btn.classList.remove("active");
         });
-				document.getElementById('title').value = meeting.title
-				document.getElementById('date').value = meeting.date
-				document.getElementById('time').value = meeting.time
-				document.getElementById('max_people').value = meeting.max_people
-				document.getElementById('location').value = meeting.location
-				document.getElementById('notice').value = meeting.notice
-				document.getElementById('equipment').value = meeting.equipment
-		    const $btns = document.querySelector(".category-buttons").children;
-		    for(const $btn of $btns) {
-            if($btn.dataset.category !== meeting.category) continue;
+        document.getElementById('title').value = meeting.title
+        document.getElementById('date').value = meeting.date
+        document.getElementById('time').value = meeting.time
+        document.getElementById('end_time').value = meeting.end_time
+        document.getElementById('max_people').value = meeting.max_people
+        document.getElementById('location').value = meeting.location
+        document.getElementById('notice').value = meeting.notice
+        document.getElementById('equipment').value = meeting.equipment
+        const $btns = document.querySelector(".category-buttons").children;
+        for (const $btn of $btns) {
+            if ($btn.dataset.category !== meeting.category) continue;
             $btn.classList.add('active');
             break;
-		    }
+        }
         {#fetch(`/meetings/edit/${meetingId}`, {method: "POST"})#}
         {#    .then((response) => response.json())#}
         {#    .then((data) => {#}
@@ -627,41 +643,41 @@
     };
 
     function clickAttendMeeting(meetingId) {
-        if(!confirm("모임에 참석 하시겠습니까?")) return;
+        if (!confirm("모임에 참석 하시겠습니까?")) return;
         $.ajax({
-		        type: 'POST',
-		        url: `/meetings/attend/${meetingId}`,
-		        data: {},
+            type: 'POST',
+            url: `/meetings/attend/${meetingId}`,
+            data: {},
             headers: {
                 'X-CSRF-TOKEN': getCookie('csrf_access_token'),
             },
-		        success: function (response) {
-				        if(response.result === 'success') {
-						        window.location.reload();
-				        }
-		        },
-		        error: function (error) {
-				        alert(error.responseJSON.msg);
-		        }
+            success: function (response) {
+                if (response.result === 'success') {
+                    window.location.reload();
+                }
+            },
+            error: function (error) {
+                alert(error.responseJSON.msg);
+            }
 
         })
 
     }
 
     function clickCancelMeeting(meetingId) {
-        if(!confirm("모임 참석을 취소하겠습니까?")) return;
+        if (!confirm("모임 참석을 취소하겠습니까?")) return;
         $.ajax({
-		        type: 'POST',
-		        url: `/meetings/cancel/${meetingId}`,
-		        data: {},
+            type: 'POST',
+            url: `/meetings/cancel/${meetingId}`,
+            data: {},
             headers: {
                 'X-CSRF-TOKEN': getCookie('csrf_access_token'),
             },
-		        success: function (response) {
-				        if(response.result === 'success') {
-						        window.location.reload();
-				        }
-		        }
+            success: function (response) {
+                if (response.result === 'success') {
+                    window.location.reload();
+                }
+            }
         })
 
     }
@@ -693,7 +709,7 @@
                 console.log(response["leader"])
 
                 const leader = response["leader"]
-		            document.getElementById("group_title").textContent = response["title"]
+                document.getElementById("group_title").textContent = response["title"]
                 document.getElementById("leader-name").textContent = "이름 :" + leader["name"];
                 {#document.getElementById("leader-nickname").textContent = leader["nickname"];#}
                 document.getElementById("leader-gender").textContent = "성별 : " + leader["gender"];
@@ -705,7 +721,7 @@
 
                 //멤버를 불러오자
 
-		            function getMemberDetailEle ({name, gender, birth, total_ex_time}) {
+                function getMemberDetailEle({name, gender, birth, total_ex_time}) {
                     return `<div class="member-details">
 												<div>
 													<strong style="margin-right: 10px" class="member-name">${name}</strong>
@@ -714,9 +730,9 @@
 													<span class="member-level">Lv. ${Math.floor((total_ex_time / 60) / 10 + 1)}</span>
 												</div>
 											</div>`
-		            }
+                }
 
-		            document.getElementById("member-info").insertAdjacentHTML('beforeend', response["participants"].map(e => getMemberDetailEle(e)).join`\n`)
+                document.getElementById("member-info").insertAdjacentHTML('beforeend', response["participants"].map(e => getMemberDetailEle(e)).join`\n`)
 
                 setTimeout(function () {
                     // 지도를 재렌더링
@@ -740,6 +756,29 @@
             },
         })
 
+    }
+
+    function completion() {
+
+        title = document.getElementById("group_title").textContent
+        result = document.getElementById("leader-name").textContent
+        leader_name = result.replace("이름 :", "")
+        console.log(leader_name, title)
+
+
+        $.ajax({
+            type: "POST",
+            url: "/meetings/completion",
+            data: {title: title, leader_name: leader_name},
+            headers: {
+                'X-CSRF-TOKEN': getCookie('csrf_access_token'),
+            },
+            success: function (response) {
+							if(response.result === 'success') {
+									windo
+							}
+            }
+        })
     }
 
     function closeModal() {
