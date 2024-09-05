@@ -17,6 +17,55 @@ from datetime import datetime
 
 from app import mongo
 
+@meetings_bp.route("/completion", methods=["POST"])
+@jwt_required(locations=["cookies"])
+def completion():
+    current_user = get_jwt_identity()
+    title = request.form['title']
+    leader_name = request.form['leader_name']
+
+    print(current_user, leader_name, title)
+
+    # meetings 테이블에서 title과 일치하는 데이터 찾기
+    meeting = Meeting.find_meeting_one(title)
+    print(meeting)
+
+    current_name2 = Meeting.find_one(current_user)
+    current_name = current_name2['name']
+    print(current_name)
+
+    # 만약 meeting이 존재하지 않으면 처리
+    if not meeting:
+        print("미팅없다.")
+        return jsonify({'result': 'fail', 'msg': '해당하는 회의가 없습니다.'})
+
+    # leader_name과 current_user 비교
+    if leader_name != current_name:
+        print("d아이디 다르다")
+        return jsonify({'result': 'fail', 'msg': '리더와 현재 사용자가 일치하지 않습니다.'})
+
+    # time과 end_time을 가져와 시간 차이를 계산 (예시: 9:12, 13:20 형식)
+    start_time = datetime.strptime(meeting['time'], "%H:%M")
+    end_time = datetime.strptime(meeting['end_time'], "%H:%M")
+    print(start_time, end_time)
+
+    # 시간 차이 계산 (분 단위로 계산)
+    totalTime = (end_time - start_time).seconds // 60  # 초로 변환 후 분으로 변환
+    print(totalTime)
+
+    # participant_ids 리스트에서 각 참가자에 대해 total_ex_time 업데이트
+    participant_ids = meeting.get('participant_ids', [])
+    for participant_id in participant_ids:
+        Meeting.update_time(participant_id, totalTime)
+
+    # leader_name도 users 테이블의 total_ex_time에 totalTime을 더해서 업데이트
+    Meeting.leader_time(leader_name, totalTime)
+
+    # meetings 테이블에서 해당 title의 데이터를 삭제
+    Meeting.delete_meeting_by_title(title)
+
+    return jsonify(({"result": "success"}))
+
 @meetings_bp.route("/", methods=["GET", "POST"])
 @jwt_required(locations=["cookies"])
 def list_meetings():
@@ -34,6 +83,7 @@ def list_meetings():
         equipment = request.form.get("equipment")
         latitude = request.form.get("latitude")
         longitude = request.form.get("longitude")
+        end_time = request.form.get("end_time")
 
         if meeting_id:
             # 수정 로직
@@ -44,6 +94,7 @@ def list_meetings():
                 "category": category,
                 "date": date,
                 "time": time,
+                "end_time": end_time,
                 "max_people": max_people,
                 "location": location,
                 "notice": notice,
@@ -68,6 +119,7 @@ def list_meetings():
                 category=category,
                 date=date,
                 time=time,
+                end_time=end_time,
                 max_people=max_people,
                 location=location,
                 notice=notice,
@@ -83,7 +135,6 @@ def list_meetings():
     meetings = Meeting.get_all_meetings()
     print(meetings)
 
-
     # 오름차순 정렬을 위한 함수 정의
     def parse_meeting_datetime(meeting):
         combined_datetime = f"{meeting['date']} {meeting['time']}"
@@ -96,9 +147,9 @@ def list_meetings():
     # 날짜와 시간에 따라 오름차순 정렬
     meetings.sort(key=parse_meeting_datetime)
 
-    owner_meetings=[]
-    participant_meetings=[]
-    except_meetings=[]
+    owner_meetings = []
+    participant_meetings = []
+    except_meetings = []
     for i in range(0, len(meetings)):
         meetings[i]["date"] = (str(meetings[i]["date"].year) + '년 ' + str(meetings[i]["date"].month) + '월 ' + str(meetings[i]["date"].day) + '일')
         meetings[i]["participant_cnt"] = str(len(meetings[i]["participant_ids"]))
@@ -115,12 +166,13 @@ def list_meetings():
 
     return render_template(
         "listAndDetail.html",
-        meetings=(owner_meetings+participant_meetings+except_meetings),
+        meetings=(owner_meetings + participant_meetings + except_meetings),
         current_user=current_user,
         level=int(my_total_ex_time / 100),
         progress=int(my_total_ex_time % 100),
         my_total_ex_time=my_total_ex_time,
     )
+
 
 @meetings_bp.route("/info/<meeting_id>", methods=["GET"])
 @jwt_required(locations=["cookies"])
@@ -132,10 +184,11 @@ def get_meeting_info(meeting_id):
             "category": meeting["category"],
             "date": meeting["date"],
             "time": meeting["time"],
+            "end_time": meeting["end_time"],
             "max_people": meeting["max_people"],
             "location": meeting["location"],
             "notice": meeting["notice"],
-            "equipment": meeting["equipment"],
+            "equipment": meeting["equipment"]
         }})
     return jsonify({"result": "fail"})
 
@@ -226,6 +279,7 @@ def cancel_attendance(meeting_id):
 @meetings_bp.route("/edit/<meeting_id>", methods=["POST"])
 def edit_meeting_route(meeting_id):
     meeting = Meeting.get_meeting_by_id(meeting_id)
+    print(meeting)
     return jsonify(meeting)
 
 

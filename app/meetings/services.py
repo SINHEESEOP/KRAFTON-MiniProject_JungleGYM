@@ -1,17 +1,18 @@
 from .models import Meeting
 
 def create_meeting(
-    category, date, time, max_people, location, notice, equipment, leader_info
+    category, date, time, max_people, location, notice, equipment, leader_info, end_time
 ):
     new_meeting = Meeting(
         category=category,
         date=date,
         time=time,
+        end_time=end_time,
         max_people=max_people,
         location=location,
         notice=notice,
         equipment=equipment,
-        leader_info=leader_info,
+        leader_info=leader_info
     )
     new_meeting.save()
     return new_meeting
