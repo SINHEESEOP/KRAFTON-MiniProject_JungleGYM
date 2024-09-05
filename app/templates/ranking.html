@@ -10,6 +10,11 @@
 	<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
 	<style>
+			* {
+					border: 0;
+					margin: 0;
+					box-sizing: border-box;
+			}
       body {
           font-family: 'Arial', sans-serif;
           background-color: #f7f7f7;
@@ -24,7 +29,7 @@
           border-radius: 10px;
           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
           width: 50%; /* 화면의 50%를 차지하도록 설정 */
-          height: 1000px;
+          height: calc(100vh - 70px);
           display: flex;
           flex-direction: column;
           justify-content: space-between;

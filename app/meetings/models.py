@@ -6,19 +6,24 @@ import logging
 
 class Meeting:
     def __init__(
-        self,
-        category,
-        date,
-        time,
-        max_people,
-        location,
-        latitude,
-        longitude,
-        notice="",
-        equipment="",
-        leader_info="",
-        leader_id=None,
+            self,
+            title,
+            category,
+            date,
+            time,
+            max_people,
+            location,
+            latitude,
+            longitude,
+            leader_id,
+            _id="",
+            notice="",
+            equipment="",
+            leader_info="",
     ):
+
+        self._id = _id
+        self.title = title
         self.category = category
         self.date = date
         self.time = time
@@ -35,6 +40,7 @@ class Meeting:
 
     def save(self):
         meeting_data = {
+            "title": self.title,
             "category": self.category,
             "date": self.date,
             "time": self.time,
@@ -47,7 +53,7 @@ class Meeting:
             "participant_ids": self.participant_ids,
             "created_at": self.created_at,
             "latitude": self.latitude,
-            "longitude": self.longitude,            
+            "longitude": self.longitude,
         }
         mongo.db.meetings.insert_one(meeting_data)
 
@@ -59,22 +65,34 @@ class Meeting:
     def get_meeting_by_id(meeting_id):
         return mongo.db.meetings.find_one({"_id": ObjectId(meeting_id)})
 
-    def update(self, data):
+    @staticmethod
+    def update(data):
         update_data = {
-            "category": data.get("category", self.category),
-            "date": data.get("date", self.date),
-            "time": data.get("time", self.time),
-            "max_people": data.get("max_people", self.max_people),
-            "location": data.get("location", self.location),
-            "notice": data.get("notice", self.notice),
-            "equipment": data.get("equipment", self.equipment),
-            "leader_info": data.get("leader_info", self.leader_info),
+            "title": data.get("title", {}),
+            "category": data.get("category", {}),
+            "date": data.get("date", {}),
+            "time": data.get("time", {}),
+            "max_people": data.get("max_people", {}),
+            "location": data.get("location", {}),
+            "notice": data.get("notice", {}),
+            "equipment": data.get("equipment", {}),
+            "leader_info": data.get("leader_info", {}),
+            "latitude": data.get("latitude", {}),
+            "longitude": data.get("longitude", {}),
         }
-        mongo.db.meetings.update_one({"_id": self._id}, {"$set": update_data})
+        mongo.db.meetings.update_one({"_id": ObjectId(data.get("_id", {}))}, {"$set": update_data})
 
     @staticmethod
     def delete(meeting_id):
         return mongo.db.meetings.delete_one({"_id": ObjectId(meeting_id)})
+
+    @staticmethod
+    def find_one(user_id):
+        user = mongo.db['users'].find_one(
+            {'user_id': user_id},  # 검색 조건
+            {'name': 1, 'birth': 1, 'gender': 1, 'total_ex_time': 1, '_id': 0}  # 가져올 필드만 명시, _id 제외
+        )
+        return user
 
     def __repr__(self):
         return f"<Meeting {self.category}>"
