@@ -1,350 +1,395 @@
-`<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Exercise List</title>
-    <style>
+<head>
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>Exercise List</title>
+
+	<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+	/>
+	<style>
+			* {
+					padding: 0;
+					margin: 0;
+					box-sizing: border-box;
+			}
       body {
-        font-family: Arial, sans-serif;
-        background-color: rgba(0, 0, 0, 0.1);
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
+          font-family: Arial, sans-serif;
+          background-color: rgba(0, 0, 0, 0.1);
+          margin: 0;
+          padding: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
       }
 
       .container {
-        max-width: 500px;
-        width: 100%;
-        height: 90vh;
-        background-color: #fff;
-        border-radius: 10px;
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
-        padding: 20px;
-        overflow-y: auto;
-        margin: 0 auto;
+          max-width: 500px;
+          width: 100%;
+          height: 90vh;
+          background-color: #fff;
+          border-radius: 10px;
+          box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+          padding: 20px;
+          overflow-y: auto;
+          margin: 0 auto;
+      }
+      .container-header {
+		      position: relative;
+      }
+
+      .rank-icon {
+		      position: absolute;
+		      color: gold;
+		      font-size: 1.25rem;
+			    top: 0;
+			    right: 0;
+		      cursor: pointer;
       }
 
       .level-info {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 20px;
       }
 
       .level-bar {
-        width: 70%;
-        height: 20px;
-        background-color: #e0e0e0;
-        border-radius: 10px;
-        overflow: hidden;
-        position: relative;
+          width: 70%;
+          height: 20px;
+          background-color: #e0e0e0;
+          border-radius: 10px;
+          overflow: hidden;
+          position: relative;
       }
 
       .level-bar-progress {
-        height: 100%;
-        background-color: #76c7c0;
-        position: absolute;
-        top: 0;
-        left: 0;
+          height: 100%;
+          background-color: #76c7c0;
+          position: absolute;
+          top: 0;
+          left: 0;
       }
 
       .level-text {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 30%;
-        padding-left: 10px;
-        font-weight: bold;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 30%;
+          padding-left: 10px;
+          font-weight: bold;
       }
 
       .meeting-card {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        background-color: #f9f9f9;
-        cursor: pointer;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px;
+          margin-bottom: 10px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          background-color: #f9f9f9;
+          cursor: pointer;
       }
 
       .meeting-details {
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        margin-right: 10px;
+          flex-grow: 1;
+          display: flex;
+          flex-direction: column;
+          margin-right: 10px;
       }
 
       .meeting-details h2 {
-        margin: 0;
-        font-size: 1rem;
-        color: #333;
+          margin: 0;
+          font-size: 1rem;
+          color: #333;
       }
 
       .meeting-details p {
-        margin: 0;
-        color: #666;
-        font-size: 0.9rem;
+          margin: 0;
+          color: #666;
+          font-size: 0.9rem;
       }
 
       .btn-action {
-        padding: 10px 10px;
-        border: none;
-        border-radius: 5px;
-        font-size: 14px;
-        color: #fff;
-        text-decoration: none;
-        cursor: pointer;
+          padding: 10px 10px;
+          border: none;
+          border-radius: 5px;
+          font-size: 14px;
+          color: #fff;
+          text-decoration: none;
+          cursor: pointer;
       }
 
       .btn-edit {
-        background-color: #4caf50;
+          background-color: #4caf50;
       }
 
       .btn-cancel {
-        background-color: #f44336;
+          background-color: #f44336;
       }
 
       .btn-attend {
-        background-color: #2196f3;
+          background-color: #2196f3;
       }
 
       .btn-add {
-        position: absolute;
-        bottom: 40px;
-        right: 40px;
-        width: 50px;
-        height: 50px;
-        background-color: #2196f3;
-        border-radius: 50%;
-        color: #fff;
-        font-size: 30px;
-        text-align: center;
-        line-height: 50px;
-        text-decoration: none;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        cursor: pointer;
+          position: absolute;
+          bottom: 40px;
+          right: 40px;
+          width: 50px;
+          height: 50px;
+          background-color: #2196f3;
+          border-radius: 50%;
+          color: #fff;
+          font-size: 30px;
+          text-align: center;
+          line-height: 50px;
+          text-decoration: none;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+          cursor: pointer;
       }
 
       .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.5);
-        justify-content: center;
-        align-items: center;
+          display: none;
+          position: fixed;
+          z-index: 1000;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          overflow: auto;
+          background-color: rgba(0, 0, 0, 0.5);
+          justify-content: center;
+          align-items: center;
       }
 
       .modal-content {
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-        width: 450px;
+		      position: relative;
+          background-color: #fff;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+          width: 450px;
+      }
+      .times-btn {
+		      position: absolute;
+		      right: 20px;
+		      font-size: 1.5rem;
+		      cursor: pointer;
       }
 
       .close-btn {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
+          color: #aaa;
+          float: right;
+          font-size: 28px;
+          font-weight: bold;
       }
 
       .close-btn:hover,
       .close-btn:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
+          color: black;
+          text-decoration: none;
+          cursor: pointer;
       }
 
       .category-buttons {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 15px;
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 15px;
       }
 
       .category-buttons button {
-        padding: 10px 15px;
-        border: none;
-        border-radius: 20px;
-        background-color: #f0f0f0;
-        cursor: pointer;
-        font-size: 14px;
+          padding: 10px 15px;
+          border: none;
+          border-radius: 20px;
+          background-color: #f0f0f0;
+          cursor: pointer;
+          font-size: 14px;
       }
 
       .category-buttons button.active {
-        background-color: #007bff;
-        color: #fff;
+          background-color: #007bff;
+          color: #fff;
       }
 
       .form-group {
-        margin-bottom: 15px;
+          margin-bottom: 15px;
       }
 
       .form-group input,
       .form-group textarea {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        font-size: 14px;
+          width: 100%;
+          padding: 10px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          font-size: 14px;
       }
 
       .form-group textarea {
-        resize: none;
-        height: 60px;
+          resize: none;
+          height: 60px;
       }
 
       .btn-submit {
-        width: 100%;
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-        background-color: #007bff;
-        color: #fff;
-        font-size: 16px;
-        cursor: pointer;
+          width: 100%;
+          padding: 10px;
+          border: none;
+          border-radius: 5px;
+          background-color: #007bff;
+          color: #fff;
+          font-size: 16px;
+          cursor: pointer;
       }
-    </style>
-  </head>
+	</style>
+</head>
 
-  <body>
-    <div class="container">
-      <div class="level-info">
-        <div class="level-bar">
-          <div class="level-bar-progress" style="width: {{ progress }}%;"></div>
-        </div>
-        <div class="level-text">Lv {{ level }} - {{ progress }}%</div>
-      </div>
-      <ul>
-        {% for meeting in meetings %}
-        <li
-          class="meeting-card"
-          onclick="openDetailsModal('{{ meeting._id }}')"
-        >
-          <div class="meeting-details">
-            <h2>{{ meeting.date }} {{ meeting.day }}</h2>
-            <p>{{ meeting.time }} | {{ meeting.location }}</p>
-            <p>{{ meeting.participant_cnt }} / {{ meeting.max_people }}인</p>
-          </div>
-          <div class="meeting-actions">
-            {% if meeting.is_owner %}
-            <button
-              class="btn-action btn-edit"
-              onclick="event.stopPropagation(); openEditModal('{{ meeting._id }}')"
-            >
-              수정
-            </button>
-            {% elif meeting.is_participant %}
-            <button
-              class="btn-action btn-cancel"
-              onclick="event.stopPropagation(); deleteMeeting('{{ meeting._id }}')"
-            >
-              취소
-            </button>
-            {% else %}
-            <!-- <button
+<body>
+{% from "logout_button.html" import logout_button %}
+{{ logout_button(20, 20) }}
+<div class="container">
+	<div class="container-header">
+		<div class="level-info">
+			<div class="level-bar">
+				<div class="level-bar-progress" style="width: {{ progress }}%;"></div>
+			</div>
+			<div class="level-text">Lv {{ level }} - {{ progress }}%</div>
+		</div>
+		<a href="/ranking" class="rank-icon">
+			<i class="fas fa-crown"></i>
+		</a>
+	</div>
+	<ul>
+		{% for meeting in meetings %}
+			<li
+					class="meeting-card"
+					onclick="openDetailsModal('{{ meeting._id }}')"
+			>
+				<div class="meeting-details">
+					<h2>{{ meeting.date }} {{ meeting.day }}</h2>
+					<p>{{ meeting.time }} | {{ meeting.location }}</p>
+					<p>{{ meeting.participant_cnt }} / {{ meeting.max_people }}인</p>
+				</div>
+				<div class="meeting-actions">
+					{% if meeting.is_owner %}
+						<button
+								class="btn-action btn-edit"
+								onclick="event.stopPropagation(); openEditModal('{{ meeting._id }}')"
+						>
+							수정
+						</button>
+					{% elif meeting.is_participant %}
+						<button
+								class="btn-action btn-cancel"
+								onclick="event.stopPropagation(); clickCancelMeeting('{{ meeting._id }}')"
+						>
+							취소
+						</button>
+					{% else %}
+						<!-- <button
               class="btn-action btn-attend"
               onclick="event.stopPropagation(); attendMeeting('{{ meeting._id }}')"
             >
               참석
             </button> -->
-            <button
-              class="btn-action btn-attend"
-              onclick="event.stopPropagation(); toggleAttend(this)"
-            >
-              참석
-            </button>
+						<button
+								class="btn-action btn-attend"
+								onclick="event.stopPropagation(); clickAttendMeeting('{{ meeting._id }}')"
+						>
+							참석
+						</button>
 
-            {% endif %}
-          </div>
-        </li>
-        {% endfor %}
-      </ul>
-    </div>
-    <a href="#" class="btn-add" id="openModal">+</a>
+					{% endif %}
+				</div>
+			</li>
+		{% endfor %}
+	</ul>
+</div>
+<a href="#" class="btn-add" id="openModal">+</a>
 
-    <!-- Modal -->
-    <div id="myModal" class="modal">
-      <div class="modal-content">
-        <span class="close-btn">&times;</span>
-        <h1>Make your GYM</h1>
-        <p>What’s your GYM?</p>
-        <form id="create_meeting">
-          <input type="hidden" name="meeting_id" id="meeting_id" />
-          <div class="category-buttons">
-            <button
-              type="button"
-              class="category-button active"
-              data-category="러닝"
-            >
-              #러닝
-            </button>
-            <button type="button" class="category-button" data-category="헬스">
-              #헬스
-            </button>
-            <button
-              type="button"
-              class="category-button"
-              data-category="클라이밍"
-            >
-              #클라이밍
-            </button>
-          </div>
-          <div class="form-group">
-            <input
-              type="date"
-              name="date"
-              id="date"
-              placeholder="날짜"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <input
-              type="time"
-              name="time"
-              id="time"
-              placeholder="시간"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <input
-              type="number"
-              name="max_people"
-              id="max_people"
-              placeholder="최대 인원"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <input
-              type="text"
-              name="location"
-              id="location"
-              placeholder="장소"
-              required
-            />
-          </div>
-          <input type="hidden" id="latitudeInput" name="latitude" />
-          <input type="hidden" id="longitudeInput" name="longitude" />
-          <div class="form-group">
+<!-- Modal -->
+<div id="myModal" class="modal">
+	<div class="modal-content">
+		<span class="close-btn">&times;</span>
+		<h1>Make your GYM</h1>
+		<p>What’s your GYM?</p>
+		<form id="create_meeting">
+			<input type="hidden" name="meeting_id" id="meeting_id"/>
+			<div class="category-buttons">
+				<button
+						type="button"
+						class="category-button active"
+						data-category="러닝"
+				>
+					#러닝
+				</button>
+				<button type="button" class="category-button" data-category="헬스">
+					#헬스
+				</button>
+				<button
+						type="button"
+						class="category-button"
+						data-category="클라이밍"
+				>
+					#클라이밍
+				</button>
+			</div>
+			<div class="form-group">
+				<input
+						type="text"
+						name="title"
+						id="title"
+						placeholder="제목"
+						required
+				/>
+			</div>
+			<div class="form-group">
+				<input
+						type="date"
+						name="date"
+						id="date"
+						placeholder="날짜"
+						required
+				/>
+			</div>
+			<div class="form-group">
+				<input
+						type="time"
+						name="time"
+						id="time"
+						placeholder="시간"
+						required
+				/>
+			</div>
+			<div class="form-group">
+				<input
+						type="number"
+						name="max_people"
+						id="max_people"
+						placeholder="최대 인원"
+						required
+				/>
+			</div>
+			<div class="form-group">
+				<input
+						type="text"
+						name="location"
+						id="location"
+						placeholder="장소"
+						required
+				/>
+			</div>
+			<input type="hidden" id="latitudeInput" name="latitude"/>
+			<input type="hidden" id="longitudeInput" name="longitude"/>
+			<div class="form-group">
             <textarea
-              name="notice"
-              id="notice"
-              placeholder="공지사항"
-            ></textarea> 
+		            name="notice"
+		            id="notice"
+		            placeholder="공지사항"
+            ></textarea>
 			</div>
 			<div class="form-group">
 				<input
@@ -362,11 +407,18 @@
 
 <div id="groupInfoModal" class="modal">
 	<div class="modal-content">
-		<span onclick="closeModal()">&times;</span>
+		<span class="times-btn" onclick="closeModal()" style="">&times;</span>
 		
 		<div class="group-info">
-			<h2>Group Info.</h2>
-			
+
+			<h2 id="group_title"></h2>
+{#			시작 버튼 클릭 시 시간 기록, 완료 버튼 #}
+{#			거절 #}
+{#			리더가 최종적으로 완료하기 위해선 개별 처리 #}
+{#			시작 -> 그룹아이디 그룹원[] 시작시간 종료시간 생성 #}
+
+{#						 종료시간 지난 후 리더가 개별 체크를 하고 시간 일괄 처리 #}
+			<button>시작? 종료? 추방?</button>
 			<div class="leader-info">
 				<h3>Leader Info.</h3>
 				<div class="leader-details">
@@ -383,20 +435,10 @@
 			</div>
 			
 			<div id="map" style="width:100%;height:250px;"></div>
-			
-			<div class="member-info">
-				<h5>Member Info.</h5>
-				<div class="member-details"> {# 여기에 나중에 멤버 많아지면 스크롤로 변경 css 추가 및 높이 설정해줘야함.#}
-					<div>
-						<strong style="margin-right: 10px" class="member-name">김와글</strong>
-						<span style="margin-right: 10px" class="member-gender">여자</span>
-						<span style="margin-right: 10px" class="member-age">24</span>
-						<span class="member-level">Lv. 3</span>
-					</div>
-				</div>
+
+			<h5>Member Info.</h5>
+			<div class="member-info" id="member-info">
 			</div>
-
-
 		</div>
 	</div>
 </div>
@@ -435,7 +477,7 @@
 
 <script>
     var modal = document.getElementById("myModal");
-    var btn = document.getElementById("openModal");
+    var openModalBtn = document.getElementById("openModal");
     var span = document.getElementsByClassName("close-btn")[0];
     var categoryInput = document.getElementById("category");
     var meetingIdInput = document.getElementById("meeting_id");
@@ -471,9 +513,11 @@
     })
 
     // Modal 열기
-    btn.onclick = function () {
+    openModalBtn.onclick = function () {
         modal.style.display = "flex";
         resetModal();
+				document.getElementById('date').value = new Date().toISOString().substring(0, 10)
+				document.getElementById('time').value = new Date().toISOString().slice(11, 16);
     };
 
     // Modal 닫기
@@ -498,31 +542,63 @@
         };
     });
 
-
-    function openEditModal(meetingId) {
-        fetch(`/meetings/edit/${meetingId}`, {method: "POST"})
-            .then((response) => response.json())
-            .then((data) => {
-                meetingIdInput.value = data._id.$oid;
-                document.getElementById("date").value = data.date;
-                document.getElementById("time").value = data.time;
-                document.getElementById("max_people").value = data.max_people;
-                document.getElementById("location").value = data.location;
-                document.getElementById("notice").value = data.notice;
-                document.getElementById("equipment").value = data.equipment;
-                document.getElementById("leader_info").value = data.leader_info;
-                document
-                    .querySelectorAll(".category-button")
-                    .forEach(function (button) {
-                        if (button.getAttribute("data-category") === data.category) {
-                            button.classList.add("active");
-                            categoryInput.value = data.category;
-                        } else {
-                            button.classList.remove("active");
-                        }
-                    });
-                modal.style.display = "flex";
-            });
+    async function openEditModal(meetingId) {
+        modal.style.display = "flex";
+        document.getElementById("meeting_id").value = meetingId;
+		    const response = await fetch(`/meetings/info/${meetingId}`, {
+            method: "GET",
+            credentials: 'same-origin',
+            headers: {
+                'X-CSRF-TOKEN': getCookie('csrf_access_token'),
+            },
+		    })
+		    const result = await response.json();
+            console.log(result);
+		    if(result.result === "fail") {
+				    return alert("불러오기 실패");
+		    }
+		    const { meeting } = result;
+		    console.log(meeting);
+        document.getElementById("category").value = meeting.category
+        document.querySelectorAll(".category-button").forEach(function (btn) {
+            btn.classList.remove("active");
+        });
+				document.getElementById('title').value = meeting.title
+				document.getElementById('date').value = meeting.date
+				document.getElementById('time').value = meeting.time
+				document.getElementById('max_people').value = meeting.max_people
+				document.getElementById('location').value = meeting.location
+				document.getElementById('notice').value = meeting.notice
+				document.getElementById('equipment').value = meeting.equipment
+		    const $btns = document.querySelector(".category-buttons").children;
+		    for(const $btn of $btns) {
+            if($btn.dataset.category !== meeting.category) continue;
+            $btn.classList.add('active');
+            break;
+		    }
+        {#fetch(`/meetings/edit/${meetingId}`, {method: "POST"})#}
+        {#    .then((response) => response.json())#}
+        {#    .then((data) => {#}
+        {#        meetingIdInput.value = data._id.$oid;#}
+        {#        document.getElementById("date").value = data.date;#}
+        {#        document.getElementById("time").value = data.time;#}
+        {#        document.getElementById("max_people").value = data.max_people;#}
+        {#        document.getElementById("location").value = data.location;#}
+        {#        document.getElementById("notice").value = data.notice;#}
+        {#        document.getElementById("equipment").value = data.equipment;#}
+        {#        document.getElementById("leader_info").value = data.leader_info;#}
+        {#        document#}
+        {#            .querySelectorAll(".category-button")#}
+        {#            .forEach(function (button) {#}
+        {#                if (button.getAttribute("data-category") === data.category) {#}
+        {#                    button.classList.add("active");#}
+        {#                    categoryInput.value = data.category;#}
+        {#                } else {#}
+        {#                    button.classList.remove("active");#}
+        {#                }#}
+        {#            });#}
+        {#        modal.style.display = "flex";#}
+        {#    });#}
     }
 
     function deleteMeeting(meetingId) {
@@ -550,19 +626,58 @@
         }
     };
 
-  
-             function toggleAttend(button) {
-            if (button.innerText === "참석") {
-                button.innerText = "취소";
-                button.classList.remove("btn-attend");
-                button.classList.add("btn-cancel");
-            } else {
-                button.innerText = "참석";
-                button.classList.remove("btn-cancel");
-                button.classList.add("btn-attend");
-            }
-            }
-  
+    function clickAttendMeeting(meetingId) {
+        if(!confirm("모임에 참석 하시겠습니까?")) return;
+        $.ajax({
+		        type: 'POST',
+		        url: `/meetings/attend/${meetingId}`,
+		        data: {},
+            headers: {
+                'X-CSRF-TOKEN': getCookie('csrf_access_token'),
+            },
+		        success: function (response) {
+				        if(response.result === 'success') {
+						        window.location.reload();
+				        }
+		        },
+		        error: function (error) {
+				        alert(error.responseJSON.msg);
+		        }
+
+        })
+
+    }
+
+    function clickCancelMeeting(meetingId) {
+        if(!confirm("모임 참석을 취소하겠습니까?")) return;
+        $.ajax({
+		        type: 'POST',
+		        url: `/meetings/cancel/${meetingId}`,
+		        data: {},
+            headers: {
+                'X-CSRF-TOKEN': getCookie('csrf_access_token'),
+            },
+		        success: function (response) {
+				        if(response.result === 'success') {
+						        window.location.reload();
+				        }
+		        }
+        })
+
+    }
+
+    function toggleAttend(button) {
+        if (button.innerText === "참석") {
+            button.innerText = "취소";
+            button.classList.remove("btn-attend");
+            button.classList.add("btn-cancel");
+        } else {
+            button.innerText = "참석";
+            button.classList.remove("btn-cancel");
+            button.classList.add("btn-attend");
+        }
+    }
+
     function openDetailsModal(meetingId) {
         document.getElementById("groupInfoModal").style.display = "flex"
 
@@ -570,23 +685,38 @@
             type: "GET",
             url: `/meetings/details/${meetingId}`,
             data: {},
+            headers: {
+                'X-CSRF-TOKEN': getCookie('csrf_access_token'),
+            },
             success: function (response) {
                 console.log(response["participants"])
                 console.log(response["leader"])
 
                 const leader = response["leader"]
+		            document.getElementById("group_title").textContent = response["title"]
                 document.getElementById("leader-name").textContent = "이름 :" + leader["name"];
                 {#document.getElementById("leader-nickname").textContent = leader["nickname"];#}
                 document.getElementById("leader-gender").textContent = "성별 : " + leader["gender"];
                 document.getElementById("leader-birth").textContent = "나이 : " + leader["birth"];
                 document.getElementById("leader-phone").textContent = "번호 : " + leader["phone_number"];
-                document.getElementById("leader-level").textContent = "LV_" + ((leader["total_ex_time"] / 60) / 10 + 1)
+                document.getElementById("leader-level").textContent = "Lv " + Math.floor((leader["total_ex_time"] / 60) / 10 + 1)
                 console.log(response["longitude"])
                 console.log(response["latitude"])
 
-								//멤버를 불러오자
+                //멤버를 불러오자
 
+		            function getMemberDetailEle ({name, gender, birth, total_ex_time}) {
+                    return `<div class="member-details">
+												<div>
+													<strong style="margin-right: 10px" class="member-name">${name}</strong>
+													<span style="margin-right: 10px" class="member-gender">${gender}</span>
+													<span style="margin-right: 10px" class="member-age">${birth}</span>
+													<span class="member-level">Lv. ${Math.floor((total_ex_time / 60) / 10 + 1)}</span>
+												</div>
+											</div>`
+		            }
 
+		            document.getElementById("member-info").insertAdjacentHTML('beforeend', response["participants"].map(e => getMemberDetailEle(e)).join`\n`)
 
                 setTimeout(function () {
                     // 지도를 재렌더링
@@ -614,10 +744,12 @@
 
     function closeModal() {
         document.getElementById("groupInfoModal").style.display = "none";
+        document.getElementById("member-info").innerHTML = '';
     }
 
     function resetModal() {
         meetingIdInput.value = "";
+        document.getElementById("title").value = "";
         document.getElementById("date").value = "";
         document.getElementById("time").value = "";
         document.getElementById("max_people").value = "";
@@ -642,24 +774,24 @@
 
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div
         mapOption = {
-          center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-          level: 3, // 지도의 확대 레벨
+            center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+            level: 3, // 지도의 확대 레벨
         };
 
-      // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
-      let map = new kakao.maps.Map(mapContainer, mapOption);
+    // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
+    let map = new kakao.maps.Map(mapContainer, mapOption);
 
-      // 마커가 표시될 위치입니다
-      var markerPosition = new kakao.maps.LatLng(33.450701, 126.570667);
+    // 마커가 표시될 위치입니다
+    var markerPosition = new kakao.maps.LatLng(33.450701, 126.570667);
 
-      // 마커를 생성합니다
-      var marker = new kakao.maps.Marker({
+    // 마커를 생성합니다
+    var marker = new kakao.maps.Marker({
         position: markerPosition,
-      });
+    });
 
-      // 마커가 지도 위에 표시되도록 설정합니다
-      marker.setMap(map);
-    </script>
-  </body>
+    // 마커가 지도 위에 표시되도록 설정합니다
+    marker.setMap(map);
+</script>
+</body>
 </html>
 `

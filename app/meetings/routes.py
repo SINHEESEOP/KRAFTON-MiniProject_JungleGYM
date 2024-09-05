@@ -15,6 +15,8 @@ from app.meetings.services import clean_leader_info
 from app.auth.services import myinfo_service
 from datetime import datetime
 
+from app import mongo
+
 
 @meetings_bp.route("/", methods=["GET", "POST"])
 @jwt_required(locations=["cookies"])
@@ -23,6 +25,7 @@ def list_meetings():
 
     if request.method == "POST":
         meeting_id = request.form.get("meeting_id")
+        title = request.form.get("title")
         category = request.form.get("category")
         date = request.form.get("date")
         time = request.form.get("time")
@@ -30,49 +33,49 @@ def list_meetings():
         location = request.form.get("location")
         notice = request.form.get("notice")
         equipment = request.form.get("equipment")
-        leader_info = request.form.get("leader_info")
-        user_id = request.form.get("user_id")
         latitude = request.form.get("latitude")
         longitude = request.form.get("longitude")
 
-        # if meeting_id:
-        #     # 수정 로직
-        #     meeting = Meeting.get_meeting_by_id(meeting_id)
-        #     meeting_data = {
-        #         "category": category,
-        #         "date": date,
-        #         "time": time,
-        #         "max_people": max_people,
-        #         "location": location,
-        #         "notice": notice,
-        #         "equipment": equipment,
-        #         "leader_info": user_id,
-        #     }
-        #     meeting.update(meeting_data)
-        # else:
-        # 생성 로직
-        new_meeting = Meeting(
-            category=category,
-            date=date,
-            time=time,
-            max_people=max_people,
-            location=location,
-            notice=notice,
-            equipment=equipment,
-            leader_info=current_user,
-            latitude=latitude,
-            longitude=longitude,
-        )
-        new_meeting.save()
+        if meeting_id:
+            # 수정 로직
+            meeting = Meeting.get_meeting_by_id(meeting_id)
+            meeting_data = {
+                "_id": meeting_id,
+                "title": title,
+                "category": category,
+                "date": date,
+                "time": time,
+                "max_people": max_people,
+                "location": location,
+                "notice": notice,
+                "equipment": equipment,
+                "leader_id": current_user,
+                "latitude": latitude,
+                "longitude": longitude,
+            }
+            print('update', meeting_data)
+            Meeting.update(meeting_data)
+        else:
+            # 생성 로직
+            new_meeting = Meeting(
+                title=title,
+                category=category,
+                date=date,
+                time=time,
+                max_people=max_people,
+                location=location,
+                notice=notice,
+                equipment=equipment,
+                leader_id=current_user,
+                latitude=latitude,
+                longitude=longitude,
+            )
+            new_meeting.save()
 
         return jsonify({"result": "success"})
 
     meetings = Meeting.get_all_meetings()
-    print(meetings)
-    for i in range(0, len(meetings)):
-        meetings[i]["participant_cnt"] = str(len(meetings[i]["participant_ids"]))
-    myinfo = myinfo_service(current_user)
-    my_total_ex_time = myinfo.get("total_ex_time")
+
 
     # 오름차순 정렬을 위한 함수 정의
     def parse_meeting_datetime(meeting):
@@ -86,46 +89,72 @@ def list_meetings():
     # 날짜와 시간에 따라 오름차순 정렬
     meetings.sort(key=parse_meeting_datetime)
 
+    owner_meetings=[]
+    participant_meetings=[]
+    except_meetings=[]
+    for i in range(0, len(meetings)):
+        meetings[i]["participant_cnt"] = str(len(meetings[i]["participant_ids"]))
+        meetings[i]['is_owner'] = meetings[i]['leader_id'] == current_user
+        meetings[i]['is_participant'] = any(el == current_user for el in meetings[i]['participant_ids'])
+        if meetings[i]['is_owner']:
+            owner_meetings.append(meetings[i])
+        elif meetings[i]['is_participant']:
+            participant_meetings.append(meetings[i])
+        else:
+            except_meetings.append(meetings[i])
+    myinfo = myinfo_service(current_user)
+    my_total_ex_time = myinfo.get("total_ex_time")
+
     return render_template(
         "listAndDetail.html",
-        meetings=meetings,
+        meetings=(owner_meetings+participant_meetings+except_meetings),
         current_user=current_user,
         level=int(my_total_ex_time / 100),
         progress=int(my_total_ex_time % 100),
         my_total_ex_time=my_total_ex_time,
     )
 
+@meetings_bp.route("/info/<meeting_id>", methods=["GET"])
+@jwt_required(locations=["cookies"])
+def get_meeting_info(meeting_id):
+    meeting = Meeting.get_meeting_by_id(meeting_id)
+    if meeting:
+        return jsonify({"result": "success", "meeting": {
+            "title": meeting["title"],
+            "category": meeting["category"],
+            "date": meeting["date"],
+            "time": meeting["time"],
+            "max_people": meeting["max_people"],
+            "location": meeting["location"],
+            "notice": meeting["notice"],
+            "equipment": meeting["equipment"],
+        }})
+    return jsonify({"result": "fail"})
+
 
 @meetings_bp.route("/details/<meeting_id>", methods=["GET"])
+@jwt_required(locations=["cookies"])
 def get_meeting_details(meeting_id):
-    print(meeting_id + "이거맞냐")
     try:
         meeting = Meeting.get_meeting_by_id(meeting_id)
-        print(meeting)
         if not meeting:
             return jsonify({"error": "Meeting not found"}), 404
 
+        title = meeting.get("title", {})
         # Prepare the data to be sent as JSON
-        leader_info1 = meeting.get("leader_info", {})
-        leader_info2 = User.find_one(leader_info1)
-        leader_info = clean_leader_info(leader_info2)
+        leader_id = meeting.get("leader_id", {})
+        leader_info = clean_leader_info(User.find_one(leader_id))
 
         latitude = meeting.get("latitude")
         longitude = meeting.get("longitude")
-        print(latitude, longitude)
 
-        participants_info = meeting.get("participant_ids", [])
-        # print(participants_info2)
-        #
-        # participants_info = []
-        # for info in participants_info2:
-        #     participants_info.append(User.find_one_object_del(info))
-        #
-        # print(participants_info)
+        participants_info2 = meeting.get("participant_ids", [])
 
+        participants_info = []
+        for info in participants_info2:
+            participants_info.append(Meeting.find_one(info))
 
-
-        return jsonify({"leader": leader_info, "participants": participants_info,
+        return jsonify({"title": title, "leader": leader_info, "participants": participants_info,
                         "latitude": latitude, "longitude": longitude})
 
     except Exception as e:
@@ -144,6 +173,12 @@ def attend_meeting(meeting_id):
     if current_user in meeting["participant_ids"]:
         return (
             jsonify({"result": "error", "msg": "Already attending this meeting"}),
+            400,
+        )
+
+    if int(meeting['max_people']) == len(meeting["participant_ids"]):
+        return (
+            jsonify({"result": "error", "msg": "빈 자리가 없습니다."}),
             400,
         )
 
