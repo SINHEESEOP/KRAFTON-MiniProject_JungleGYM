@@ -400,6 +400,7 @@
 				/>
 			</div>
 			<input type="hidden" name="category" id="category" value="러닝"/>
+            <p id="create_meeting_msg" style="font-size: 0.75rem; padding-bottom: 1rem; color: red;" ></p>
 			<button type="submit" class="btn-submit">Make</button>
 		</form>
 	</div>
@@ -407,7 +408,7 @@
 
 <div id="groupInfoModal" class="modal">
 	<div class="modal-content">
-		<span class="times-btn" onclick="closeModal()" style="">&times;</span>
+		<span class="times-btn" onclick="closeModal()">&times;</span>
 		
 		<div class="group-info">
 
@@ -493,22 +494,19 @@
 
     document.querySelector('#create_meeting').addEventListener('submit', async (event) => {
         event.preventDefault();
-        try {
-            const response = await fetch('/meetings', {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: {
-                    'X-CSRF-TOKEN': getCookie('csrf_access_token'),
-                },
-                body: new FormData(event.target)
-            });
-            const result = response.json();
-
+        const response = await fetch('/meetings', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'X-CSRF-TOKEN': getCookie('csrf_access_token'),
+            },
+            body: new FormData(event.target)
+        });
+        const result = await response.json();
+        if(result.result === 'success') {
             window.location.reload();
-            return result;
-        } catch (error) {
-            alert('실패')
-            console.error(error);
+        } else {
+            document.querySelector("#create_meeting_msg").textContent = result.msg;
         }
     })
 
@@ -516,8 +514,9 @@
     openModalBtn.onclick = function () {
         modal.style.display = "flex";
         resetModal();
-				document.getElementById('date').value = new Date().toISOString().substring(0, 10)
-				document.getElementById('time').value = new Date().toISOString().slice(11, 16);
+        document.querySelector("#create_meeting_msg").textContent = '';
+        document.getElementById('date').value = new Date().toISOString().substring(0, 10)
+        document.getElementById('time').value = new Date(Date.now() + 9 * 60 * 60 * 1000 + 30 * 60 * 1000).toISOString().slice(11, 16);
     };
 
     // Modal 닫기
@@ -526,6 +525,7 @@
     };
 
     window.onclick = function (event) {
+        $('#max_people').on("propertychange change keyup paste input", typeMaxPeopleInput)   
         if (event.target == modal) {
             modal.style.display = "none";
         }
@@ -576,29 +576,29 @@
             $btn.classList.add('active');
             break;
 		    }
-        {#fetch(`/meetings/edit/${meetingId}`, {method: "POST"})#}
-        {#    .then((response) => response.json())#}
-        {#    .then((data) => {#}
-        {#        meetingIdInput.value = data._id.$oid;#}
-        {#        document.getElementById("date").value = data.date;#}
-        {#        document.getElementById("time").value = data.time;#}
-        {#        document.getElementById("max_people").value = data.max_people;#}
-        {#        document.getElementById("location").value = data.location;#}
-        {#        document.getElementById("notice").value = data.notice;#}
-        {#        document.getElementById("equipment").value = data.equipment;#}
-        {#        document.getElementById("leader_info").value = data.leader_info;#}
-        {#        document#}
-        {#            .querySelectorAll(".category-button")#}
-        {#            .forEach(function (button) {#}
-        {#                if (button.getAttribute("data-category") === data.category) {#}
-        {#                    button.classList.add("active");#}
-        {#                    categoryInput.value = data.category;#}
-        {#                } else {#}
-        {#                    button.classList.remove("active");#}
-        {#                }#}
-        {#            });#}
-        {#        modal.style.display = "flex";#}
-        {#    });#}
+        // {#fetch(`/meetings/edit/${meetingId}`, {method: "POST"})#}
+        // {#    .then((response) => response.json())#}
+        // {#    .then((data) => {#}
+        // {#        meetingIdInput.value = data._id.$oid;#}
+        // {#        document.getElementById("date").value = data.date;#}
+        // {#        document.getElementById("time").value = data.time;#}
+        // {#        document.getElementById("max_people").value = data.max_people;#}
+        // {#        document.getElementById("location").value = data.location;#}
+        // {#        document.getElementById("notice").value = data.notice;#}
+        // {#        document.getElementById("equipment").value = data.equipment;#}
+        // {#        document.getElementById("leader_info").value = data.leader_info;#}
+        // {#        document#}
+        // {#            .querySelectorAll(".category-button")#}
+        // {#            .forEach(function (button) {#}
+        // {#                if (button.getAttribute("data-category") === data.category) {#}
+        // {#                    button.classList.add("active");#}
+        // {#                    categoryInput.value = data.category;#}
+        // {#                } else {#}
+        // {#                    button.classList.remove("active");#}
+        // {#                }#}
+        // {#            });#}
+        // {#        modal.style.display = "flex";#}
+        // {#    });#}
     }
 
     function deleteMeeting(meetingId) {
@@ -761,6 +761,26 @@
             .classList.remove("active");
         document.querySelector(".category-button").classList.add("active");
         categoryInput.value = "러닝";
+    }
+
+
+    function typeMaxPeopleInput() {
+        clearInvalidValue.bind(this)();
+        fixTextLength(2).bind(this)();
+    }
+
+    function clearInvalidValue() {
+        if($(this).val() === '' || Number($(this).val()) <= 0) {
+            $(this).val('');
+        }
+    }
+
+    function fixTextLength(n) {
+        return function() {
+            if($(this).val().length > 2) {
+                $(this).val($(this).val().slice(0, n));
+            }
+        }
     }
 </script>
 
