@@ -1,4 +1,6 @@
-# Jungle GYM
+# 3일 미니프로젝트
+
+## Jungle GYM
 
 Jungle GYM is an application that helps you find your running mate.
 
