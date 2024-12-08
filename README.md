@@ -1,7 +1,7 @@
 # 3일 미니프로젝트
 
-## 발표 PDF
-file:///C:/Users/gsg04/Downloads/%ED%81%AC%EB%9E%98%ED%94%84%ED%86%A4%20%EC%A0%95%EA%B8%80%200%EC%A3%BC%EC%B0%A8_5%ED%8C%80.pdf
+## 자세한 발표 내용
+
 
 ## Jungle GYM
 Jungle GYM is an application that helps you find your running mate.
