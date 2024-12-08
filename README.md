@@ -2,6 +2,7 @@
 
 ## 자세한 발표 내용
 https://docs.google.com/presentation/d/1VLmCHjaWDqAz_kyOshTMrtB0ZM41ctZk_6xLuwlO3nE/edit?usp=drive_link
+
 ## Jungle GYM
 Jungle GYM is an application that helps you find your running mate.
 
